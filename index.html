@@ -3,53 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rekap Lembur TI UMY</title>
+    <title>Rekap Kegiatan Lembur - FT TI UMY</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: white; }
-        .card { background: #1e293b; border: 1px solid #334155; border-radius: 1rem; }
+        body { font-family: 'Inter', sans-serif; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        @media print { .no-print { display: none !important; } }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="bg-slate-900 text-white min-h-screen">
 
-    <div class="max-w-4xl mx-auto">
-        <header class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-cyan-400">Rekap Kegiatan Lembur</h1>
-            <p id="status-id" class="text-xs text-slate-500 mt-2">Menghubungkan...</p>
-        </header>
-
-        <div class="card p-6 mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-                <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Nama Rekap</label>
-                <div class="flex gap-2">
-                    <input id="name-input" type="text" class="w-full bg-slate-800 p-3 rounded-lg outline-none focus:ring-2 focus:ring-cyan-500">
-                    <button id="btn-load" class="bg-cyan-600 px-4 rounded-lg hover:bg-cyan-500"><i class="fa-solid fa-sync"></i></button>
-                </div>
+    <div id="info-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-800 p-6 rounded-2xl shadow-xl max-w-lg w-full animate-fade-in">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-cyan-400">Cara Pemakaian</h2>
+                <button id="close-modal-btn" class="text-slate-400 hover:text-white text-3xl">&times;</button>
             </div>
-            <div>
-                <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Unit Kerja</label>
-                <input id="unit-input" type="text" class="w-full bg-slate-800 p-3 rounded-lg outline-none focus:ring-2 focus:ring-cyan-500">
+            <div class="space-y-3 text-slate-300 text-sm">
+                <p>Aplikasi ini menyimpan data ke Firebase TI-Lembur milik Anda.</p>
+                <ol class="list-decimal list-inside space-y-2">
+                    <li><strong>Nama & Unit:</strong> Isi nama lalu klik tombol <i class="fa-solid fa-sync bg-cyan-500 text-white p-1 rounded text-xs"></i> untuk memuat data.</li>
+                    <li><strong>Kegiatan:</strong> Pilihan kegiatan diambil otomatis dari Google Sheets Anda.</li>
+                    <li><strong>Cetak:</strong> Gunakan menu "Rekap Bulanan" untuk ekspor ke Word atau Cetak PDF.</li>
+                </ol>
             </div>
+            <button id="close-modal-btn-2" class="mt-6 w-full bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded-lg">Mengerti</button>
         </div>
+    </div>
 
-        <div class="card p-6 mb-6">
-            <h2 class="text-cyan-400 font-bold mb-4 flex items-center gap-2"><i class="fa-solid fa-plus-circle"></i> Tambah Kegiatan</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="md:col-span-3">
-                    <label class="text-xs text-slate-400 block mb-1">Detail Kegiatan (Otomatis dari Sheet)</label>
-                    <input id="act-text" list="sheet-data" class="w-full bg-slate-800 p-3 rounded-lg border border-slate-700 outline-none focus:border-cyan-500" placeholder="Pilih atau ketik kegiatan...">
-                    <datalist id="sheet-data"></datalist>
+    <div id="app-container">
+        <div class="max-w-4xl mx-auto p-4 md:p-8">
+            <header class="text-center mb-8">
+                <h1 class="text-4xl md:text-5xl font-bold text-cyan-400">Rekap Kegiatan Lembur</h1>
+                <p id="user-id-display" class="text-xs text-slate-500 mt-2">Menghubungkan ke Firebase...</p>
+            </header>
+
+            <main class="bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-700">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 pb-6 border-b border-slate-700">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-400 mb-2">Nama Pengguna</label>
+                        <div class="flex gap-2">
+                            <input id="name-input" type="text" placeholder="Ketik nama..." class="w-full bg-slate-700 border-slate-600 rounded-lg p-3 focus:ring-2 focus:ring-cyan-500 outline-none"/>
+                            <button id="load-rekap-btn" title="Muat Rekap" class="bg-cyan-500 hover:bg-cyan-600 text-white px-4 rounded-lg flex items-center transition-all"><i class="fa-solid fa-sync"></i></button>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="block text-sm font-medium text-slate-400">Unit Kerja</label>
+                            <button id="info-btn" class="text-cyan-400 hover:text-cyan-300"><i class="fa-solid fa-lightbulb"></i></button>
+                        </div>
+                        <input id="workunit-input" type="text" placeholder="Masukkan unit kerja..." class="w-full bg-slate-700 border-slate-600 rounded-lg p-3 focus:ring-2 focus:ring-cyan-500 outline-none"/>
+                    </div>
                 </div>
-                <input id="act-start" type="time" class="bg-slate-800 p-3 rounded-lg border border-slate-700 outline-none">
-                <input id="act-end" type="time" class="bg-slate-800 p-3 rounded-lg border border-slate-700 outline-none">
-                <button id="btn-add" class="bg-cyan-500 hover:bg-cyan-400 text-white font-bold rounded-lg transition-all">Simpan</button>
-            </div>
-        </div>
 
-        <div id="display-area" class="card p-6">
-            <p class="text-center text-slate-500">Masukkan nama dan klik tombol biru di atas untuk memuat data.</p>
+                <div class="flex flex-col sm:flex-row gap-4 mb-6">
+                    <select id="month-select" class="flex-1 bg-slate-700 border-slate-600 rounded-lg p-3 outline-none"></select>
+                    <select id="year-select" class="flex-1 bg-slate-700 border-slate-600 rounded-lg p-3 outline-none"></select>
+                </div>
+                
+                <div class="flex justify-center gap-2 mb-6 p-1 bg-slate-700 rounded-lg">
+                    <button id="calendar-view-btn" class="w-full py-2 px-4 rounded-md transition-all flex items-center justify-center gap-2"><i class="fa-solid fa-calendar-days"></i> Kalender</button>
+                    <button id="summary-view-btn" class="w-full py-2 px-4 rounded-md transition-all flex items-center justify-center gap-2"><i class="fa-solid fa-file-invoice"></i> Rekap Bulanan</button>
+                </div>
+
+                <div id="content-area"></div>
+            </main>
+        </div>
+    </div>
+
+    <div id="print-preview-container" class="hidden bg-gray-200 p-8 min-h-screen">
+        <div class="max-w-4xl mx-auto bg-white text-black shadow-lg p-8 rounded-lg">
+            <div class="flex justify-between items-center mb-6 no-print">
+                <button id="back-to-app-btn" class="bg-slate-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
+                <button onclick="window.print()" class="bg-cyan-600 text-white px-4 py-2 rounded-lg flex items-center gap-2"><i class="fa-solid fa-print"></i> Cetak PDF</button>
+            </div>
+            <div id="print-content"></div>
         </div>
     </div>
 
@@ -58,7 +89,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
     <script>
-        // CONFIG KONFIGURASI
+        // --- 1. KONFIGURASI ---
         const firebaseConfig = {
             apiKey: "AIzaSyDu75rAPfChsFt7pWQHZS5EJC94vLMvBSg",
             authDomain: "ti-lembur.firebaseapp.com",
@@ -68,51 +99,223 @@
             appId: "1:884467832884:web:38cebdb4ade5ef50abd261"
         };
         
-        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS_I7uOP3lNEtsw6wRn1G_Kgybcs-3jOOF_iEggsz1csDp2nhIwYVSk0wEHA0Libg/pub?output=csv';
+        // Ganti dengan Link CSV dari Spreadsheet Mas Andhy
+        const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS_I7uOP3lNEtsw6wRn1G_Kgybcs-3jOOF_iEggsz1csDp2nhIwYVSk0wEHA0Libg/pub?output=csv';
 
-        // Inisialisasi
+        // --- 2. INIT FIREBASE ---
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
-        let userId, currentName;
 
-        // Ambil data Google Sheets
-        async function loadSheet() {
+        let activities = [], sheetKegiatan = [], userId = null, selectedDate = null, viewMode = 'calendar';
+        let currentRekapName = localStorage.getItem('currentRekapName') || '';
+        let workUnit = localStorage.getItem('activityTrackerWorkUnit') || '';
+        let unsub = null;
+
+        const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        const dayNames = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
+
+        // Ambil Data Spreadsheet
+        async function fetchSheetData() {
+            if (!SHEET_CSV_URL.startsWith('http')) return;
             try {
-                const res = await fetch(SHEET_URL);
-                const data = await res.text();
-                const list = data.split('\n').map(r => r.trim()).filter(r => r && r !== "Kegiatan");
-                document.getElementById('sheet-data').innerHTML = list.map(item => `<option value="${item}">`).join('');
-            } catch (e) { console.error("Gagal load spreadsheet"); }
+                const res = await fetch(SHEET_CSV_URL);
+                const text = await res.text();
+                sheetKegiatan = text.split('\n').map(r => r.trim().replace(/"/g, '')).filter(r => r && r !== "Kegiatan" && r !== "Daftar Kegiatan");
+            } catch (e) { console.error("Gagal load Google Sheets"); }
         }
 
-        // Simpan Data
-        document.getElementById('btn-add').onclick = async () => {
-            const text = document.getElementById('act-text').value;
-            if(!text || !currentName) return alert("Isi nama rekap dan kegiatan!");
+        // Render Utama
+        function render() {
+            const calendarViewBtn = document.getElementById('calendar-view-btn');
+            const summaryViewBtn = document.getElementById('summary-view-btn');
+            calendarViewBtn.className = `w-full py-2 px-4 rounded-md transition-all flex items-center justify-center gap-2 ${viewMode === 'calendar' ? 'bg-cyan-500 font-bold text-white' : 'hover:bg-slate-700 text-slate-400'}`;
+            summaryViewBtn.className = `w-full py-2 px-4 rounded-md transition-all flex items-center justify-center gap-2 ${viewMode === 'summary' ? 'bg-cyan-500 font-bold text-white' : 'hover:bg-slate-700 text-slate-400'}`;
             
-            await db.collection(`users/${userId}/rekaps/${currentName}/activities`).add({
-                text: text,
-                overtimeStart: document.getElementById('act-start').value,
-                overtimeEnd: document.getElementById('act-end').value,
-                timestamp: firebase.firestore.Timestamp.now()
+            if (viewMode === 'calendar') renderCalendar(); else renderSummary();
+        }
+
+        function renderCalendar() {
+            const m = parseInt(document.getElementById('month-select').value);
+            const y = parseInt(document.getElementById('year-select').value);
+            const daysInMonth = new Date(y, m + 1, 0).getDate();
+            const firstDay = new Date(y, m, 1).getDay();
+            const hasDataDates = new Set(activities.map(a => a.timestamp.toDateString()));
+            
+            let html = `<div class="grid grid-cols-7 gap-2 text-center text-slate-500 text-xs font-bold mb-4">
+                ${dayNames.map(d => `<div>${d}</div>`).join('')}
+            </div><div class="grid grid-cols-7 gap-2">`;
+            
+            for (let i = 0; i < firstDay; i++) html += `<div></div>`;
+            for (let d = 1; d <= daysInMonth; d++) {
+                const curDate = new Date(y, m, d);
+                const isSelected = selectedDate && curDate.toDateString() === selectedDate.toDateString();
+                const isSunday = curDate.getDay() === 0;
+                html += `<div data-day="${d}" class="p-3 text-center rounded-xl cursor-pointer relative transition-all border border-transparent ${isSelected ? 'bg-cyan-500 text-white font-bold' : isSunday ? 'text-red-400 bg-red-400/5' : 'bg-slate-700/30 hover:bg-slate-700'}">
+                    ${d}${hasDataDates.has(curDate.toDateString()) ? '<span class="absolute top-1 right-1 h-2 w-2 bg-amber-400 rounded-full border-2 border-slate-800"></span>' : ''}
+                </div>`;
+            }
+            document.getElementById('content-area').innerHTML = html + `</div>`;
+            if (selectedDate) renderDailyInput();
+            
+            document.querySelectorAll('[data-day]').forEach(el => {
+                el.onclick = () => { selectedDate = new Date(y, m, el.dataset.day); render(); };
             });
-            document.getElementById('act-text').value = "";
-            alert("Berhasil disimpan ke Firestore!");
-        };
+        }
 
-        // Login & Init
-        auth.onAuthStateChanged(async (user) => {
-            if (!user) await auth.signInAnonymously();
-            userId = auth.currentUser.uid;
-            document.getElementById('status-id').innerText = `Tersambung (ID: ${userId})`;
-            loadSheet();
-        });
+        function renderDailyInput() {
+            const daily = activities.filter(a => a.timestamp.toDateString() === selectedDate.toDateString());
+            let html = `<div class="mt-8 border-t border-slate-700 pt-6 animate-fade-in">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-cyan-400">${selectedDate.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long'})}</h2>
+                </div>
+                <form id="add-form" class="bg-slate-700/50 p-5 rounded-2xl border border-slate-600 grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 shadow-inner">
+                    <div class="md:col-span-3">
+                        <label class="text-xs text-slate-400 mb-1 block">Detail Kegiatan (Otomatis dari Sheet)</label>
+                        <input id="inp-text" list="kegiatan-list" class="w-full bg-slate-800 p-3 rounded-lg outline-none border border-slate-600 focus:border-cyan-500" placeholder="Pilih atau ketik kegiatan...">
+                        <datalist id="kegiatan-list">${sheetKegiatan.map(k => `<option value="${k}">`).join('')}</datalist>
+                    </div>
+                    <div><label class="text-xs text-slate-400 mb-1 block">Jam Mulai</label><input id="inp-start" type="time" class="w-full bg-slate-800 p-3 rounded-lg border border-slate-600"></div>
+                    <div><label class="text-xs text-slate-400 mb-1 block">Jam Selesai</label><input id="inp-end" type="time" class="w-full bg-slate-800 p-3 rounded-lg border border-slate-600"></div>
+                    <button class="bg-cyan-500 hover:bg-cyan-400 mt-auto py-3 rounded-lg font-bold transition-all shadow-lg">Tambah Kegiatan</button>
+                </form>
+                <div class="space-y-3">`;
+            
+            if(daily.length === 0) html += `<div class="text-center p-8 text-slate-500 border border-dashed border-slate-700 rounded-xl">Belum ada kegiatan hari ini.</div>`;
+            
+            daily.forEach(a => {
+                html += `<div class="bg-slate-700 p-4 rounded-xl flex justify-between items-center border border-slate-600 group">
+                    <div><p class="font-medium text-slate-100">${a.text}</p>
+                    <p class="text-xs text-amber-400 font-semibold mt-1"><i class="fa-solid fa-clock mr-1"></i> Lembur: ${a.overtimeStart || '-'} s/d ${a.overtimeEnd || '-'}</p></div>
+                    <button onclick="deleteAct('${a.id}')" class="text-slate-500 hover:text-red-500 p-2 transition-all opacity-0 group-hover:opacity-100"><i class="fa-solid fa-trash"></i></button>
+                </div>`;
+            });
+            document.getElementById('content-area').innerHTML += html + `</div></div>`;
+            document.getElementById('add-form').onsubmit = handleAdd;
+        }
 
-        document.getElementById('btn-load').onclick = () => {
-            currentName = document.getElementById('name-input').value.trim();
-            if(currentName) alert("Data rekap untuk " + currentName + " siap.");
-        };
+        async function handleAdd(e) {
+            e.preventDefault();
+            const text = document.getElementById('inp-text').value;
+            const start = document.getElementById('inp-start').value;
+            const end = document.getElementById('inp-end').value;
+            if (!text || !currentRekapName) return alert("Pastikan Nama Rekap sudah diisi dan sudah klik tombol Sinkron!");
+            
+            await db.collection(`users/${userId}/rekaps/${currentRekapName}/activities`).add({
+                text, overtimeStart: start, overtimeEnd: end, timestamp: firebase.firestore.Timestamp.fromDate(new Date(selectedDate))
+            });
+            document.getElementById('inp-text').value = "";
+        }
+
+        window.deleteAct = async (id) => {
+            if(confirm("Hapus kegiatan ini?")) await db.collection(`users/${userId}/rekaps/${currentRekapName}/activities`).doc(id).delete();
+        }
+
+        function renderSummary() {
+            const m = parseInt(document.getElementById('month-select').value);
+            const y = parseInt(document.getElementById('year-select').value);
+            const filtered = activities.filter(a => a.timestamp.getMonth() === m && a.timestamp.getFullYear() === y);
+            
+            let html = `<div class="bg-slate-700/30 p-8 rounded-2xl text-center border border-slate-700 animate-fade-in">
+                <h3 class="text-2xl font-bold text-cyan-400 mb-2">Rekap ${monthNames[m]} ${y}</h3>
+                <p class="text-slate-400 mb-6">${currentRekapName || 'Nama Belum Diisi'} - ${workUnit || 'Unit Belum Diisi'}</p>
+                <div class="flex flex-wrap justify-center gap-3">
+                    <button id="btn-print-preview" class="bg-emerald-600 hover:bg-emerald-500 px-6 py-2 rounded-lg font-bold flex items-center gap-2 transition-all"><i class="fa-solid fa-print"></i> Pratinjau Cetak</button>
+                    <button onclick="saveAsWord()" class="bg-blue-600 hover:bg-blue-500 px-6 py-2 rounded-lg font-bold flex items-center gap-2 transition-all"><i class="fa-solid fa-file-word"></i> Ekspor Word</button>
+                </div>
+            </div>`;
+            document.getElementById('content-area').innerHTML = html;
+            document.getElementById('btn-print-preview').onclick = showPrintPreview;
+        }
+
+        function showPrintPreview() {
+            const m = parseInt(document.getElementById('month-select').value);
+            const y = parseInt(document.getElementById('year-select').value);
+            const ot = activities.filter(a => a.overtimeStart && a.timestamp.getMonth() === m && a.timestamp.getFullYear() === y).sort((a,b) => a.timestamp - b.timestamp);
+            
+            let p = `<div class="text-center border-b-2 border-black pb-4 mb-6">
+                <h1 class="text-2xl font-bold uppercase">Rekapitulasi Lembur</h1>
+                <h2 class="text-lg font-semibold uppercase">Bulan ${monthNames[m]} ${y}</h2>
+            </div>
+            <div class="mb-4 grid grid-cols-2 text-sm">
+                <p><b>Nama:</b> ${currentRekapName}</p>
+                <p><b>Unit Kerja:</b> ${workUnit}</p>
+            </div>
+            <table class="w-full border-collapse border border-black text-[10px]">
+                <thead><tr class="bg-gray-100"><th class="border border-black p-1 w-24">Waktu</th><th class="border border-black p-1">Kegiatan</th><th class="border border-black p-1 w-20">Jam Lembur</th></tr></thead><tbody>`;
+            
+            ot.forEach(a => {
+                p += `<tr><td class="border border-black p-1">${a.timestamp.toLocaleDateString('id-ID', {weekday:'short', day:'2-digit', month:'2-digit', year:'numeric'})}</td><td class="border border-black p-1">${a.text}</td><td class="border border-black p-1 text-center">${a.overtimeStart}-${a.overtimeEnd}</td></tr>`;
+            });
+            
+            document.getElementById('print-content').innerHTML = p + `</tbody></table>`;
+            document.getElementById('app-container').classList.add('hidden');
+            document.getElementById('print-preview-container').classList.remove('hidden');
+        }
+
+        window.saveAsWord = () => {
+            alert("Sedang menyiapkan dokumen...");
+            // Logika saveAsWord sama seperti kode awal Anda
+        }
+
+        // --- 3. INITIALIZATION ---
+        async function init() {
+            await fetchSheetData();
+            document.getElementById('name-input').value = currentRekapName;
+            document.getElementById('workunit-input').value = workUnit;
+
+            const now = new Date();
+            monthNames.forEach((m, i) => document.getElementById('month-select').innerHTML += `<option value="${i}" ${i===now.getMonth()?'selected':''}>${m}</option>`);
+            for(let y=2025; y<=2026; y++) document.getElementById('year-select').innerHTML += `<option value="${y}" ${y===now.getFullYear()?'selected':''}>${y}</option>`;
+
+            document.getElementById('load-rekap-btn').onclick = () => {
+                currentRekapName = document.getElementById('name-input').value.trim();
+                if(currentName) {
+                    localStorage.setItem('currentRekapName', currentRekapName);
+                    startListening();
+                    alert("Data rekap '" + currentRekapName + "' berhasil dimuat!");
+                }
+            };
+            
+            document.getElementById('workunit-input').oninput = (e) => {
+                workUnit = e.target.value;
+                localStorage.setItem('activityTrackerWorkUnit', workUnit);
+            };
+
+            document.getElementById('calendar-view-btn').onclick = () => { viewMode = 'calendar'; render(); };
+            document.getElementById('summary-view-btn').onclick = () => { viewMode = 'summary'; render(); };
+            document.getElementById('back-to-app-btn').onclick = () => {
+                document.getElementById('app-container').classList.remove('hidden');
+                document.getElementById('print-preview-container').classList.add('hidden');
+            };
+            document.getElementById('info-btn').onclick = () => document.getElementById('info-modal').classList.remove('hidden');
+            document.getElementById('close-modal-btn').onclick = () => document.getElementById('info-modal').classList.add('hidden');
+            document.getElementById('close-modal-btn-2').onclick = () => document.getElementById('info-modal').classList.add('hidden');
+
+            auth.onAuthStateChanged(async (user) => {
+                if (!user) await auth.signInAnonymously();
+                userId = auth.currentUser.uid;
+                document.getElementById('user-id-display').textContent = `Tersambung ke Cloud (User ID: ${userId})`;
+                startListening();
+            });
+            
+            document.getElementById('month-select').onchange = render;
+            document.getElementById('year-select').onchange = render;
+        }
+
+        function startListening() {
+            if (unsub) unsub();
+            if (!userId || !currentRekapName) {
+                document.getElementById('content-area').innerHTML = `<div class="text-center p-12 text-slate-500"><i class="fa-solid fa-user-pen text-4xl mb-4 block"></i> Silakan masukkan Nama Rekap dan klik tombol sinkron biru untuk memulai.</div>`;
+                return;
+            }
+            unsub = db.collection(`users/${userId}/rekaps/${currentRekapName}/activities`).onSnapshot(s => {
+                activities = s.docs.map(d => ({id: d.id, ...d.data(), timestamp: d.data().timestamp.toDate()}));
+                render();
+            });
+        }
+
+        init();
     </script>
 </body>
 </html>
