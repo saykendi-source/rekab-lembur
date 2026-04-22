@@ -3,80 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rekap Kegiatan Lembur</title>
+    <title>Rekap Lembur TI UMY</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
-        @media print { .no-print { display: none !important; } }
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: white; }
+        .card { background: #1e293b; border: 1px solid #334155; border-radius: 1rem; }
     </style>
 </head>
-<body class="bg-slate-900 text-white">
+<body class="p-4 md:p-8">
 
-    <div id="info-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-        <div class="bg-slate-800 p-6 rounded-2xl shadow-xl max-w-lg w-full animate-fade-in text-slate-300">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-2xl font-bold text-cyan-400">Cara Pemakaian</h2>
-                <button id="close-modal-btn" class="text-3xl">&times;</button>
+    <div class="max-w-4xl mx-auto">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-cyan-400">Rekap Kegiatan Lembur</h1>
+            <p id="status-id" class="text-xs text-slate-500 mt-2">Menghubungkan...</p>
+        </header>
+
+        <div class="card p-6 mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Nama Rekap</label>
+                <div class="flex gap-2">
+                    <input id="name-input" type="text" class="w-full bg-slate-800 p-3 rounded-lg outline-none focus:ring-2 focus:ring-cyan-500">
+                    <button id="btn-load" class="bg-cyan-600 px-4 rounded-lg hover:bg-cyan-500"><i class="fa-solid fa-sync"></i></button>
+                </div>
             </div>
-            <p>Pilihan kegiatan kini diambil otomatis dari Google Sheets.</p>
-            <button id="close-modal-btn-2" class="mt-6 w-full bg-cyan-500 text-white font-bold py-2 rounded-lg">Mengerti</button>
+            <div>
+                <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Unit Kerja</label>
+                <input id="unit-input" type="text" class="w-full bg-slate-800 p-3 rounded-lg outline-none focus:ring-2 focus:ring-cyan-500">
+            </div>
         </div>
-    </div>
 
-    <div id="app-container">
-        <div class="max-w-4xl mx-auto p-4 md:p-8">
-            <header class="text-center mb-8">
-                <h1 class="text-4xl md:text-5xl font-bold text-cyan-400">Rekap Kegiatan Lembur</h1>
-                <p id="user-id-display" class="text-xs text-slate-500 mt-2"></p>
-            </header>
-
-            <main class="bg-slate-800 p-6 rounded-xl shadow-lg">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 pb-6 border-b border-slate-700">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-400 mb-2">Nama</label>
-                        <div class="flex gap-2">
-                            <input id="name-input" type="text" placeholder="Ketik nama..." class="w-full bg-slate-700 rounded-lg p-3 focus:ring-2 focus:ring-cyan-500 outline-none"/>
-                            <button id="load-rekap-btn" class="bg-cyan-500 px-4 rounded-lg"><i class="fa-solid fa-plus"></i></button>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between mb-2">
-                            <label class="block text-sm font-medium text-slate-400">Unit Kerja</label>
-                            <button id="info-btn" class="text-cyan-400"><i class="fa-solid fa-lightbulb"></i></button>
-                        </div>
-                        <input id="workunit-input" type="text" placeholder="Unit kerja..." class="w-full bg-slate-700 rounded-lg p-3 outline-none"/>
-                    </div>
+        <div class="card p-6 mb-6">
+            <h2 class="text-cyan-400 font-bold mb-4 flex items-center gap-2"><i class="fa-solid fa-plus-circle"></i> Tambah Kegiatan</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="md:col-span-3">
+                    <label class="text-xs text-slate-400 block mb-1">Detail Kegiatan (Otomatis dari Sheet)</label>
+                    <input id="act-text" list="sheet-data" class="w-full bg-slate-800 p-3 rounded-lg border border-slate-700 outline-none focus:border-cyan-500" placeholder="Pilih atau ketik kegiatan...">
+                    <datalist id="sheet-data"></datalist>
                 </div>
-
-                <div class="flex flex-col sm:flex-row gap-4 mb-6">
-                    <div class="flex-1">
-                        <label class="block text-sm font-medium text-slate-400 mb-2">Bulan</label>
-                        <select id="month-select" class="w-full bg-slate-700 rounded-lg p-3"></select>
-                    </div>
-                    <div class="flex-1">
-                        <label class="block text-sm font-medium text-slate-400 mb-2">Tahun</label>
-                        <select id="year-select" class="w-full bg-slate-700 rounded-lg p-3"></select>
-                    </div>
-                </div>
-                
-                <div class="flex justify-center gap-2 mb-6 p-1 bg-slate-700 rounded-lg">
-                    <button id="calendar-view-btn" class="w-full py-2 rounded-md">Kalender</button>
-                    <button id="summary-view-btn" class="w-full py-2 rounded-md">Rekap Bulanan</button>
-                </div>
-
-                <div id="content-area"></div>
-            </main>
+                <input id="act-start" type="time" class="bg-slate-800 p-3 rounded-lg border border-slate-700 outline-none">
+                <input id="act-end" type="time" class="bg-slate-800 p-3 rounded-lg border border-slate-700 outline-none">
+                <button id="btn-add" class="bg-cyan-500 hover:bg-cyan-400 text-white font-bold rounded-lg transition-all">Simpan</button>
+            </div>
         </div>
-    </div>
 
-    <div id="print-preview-container" class="hidden bg-gray-200 p-8 min-h-screen">
-        <div class="max-w-4xl mx-auto bg-white text-black shadow-lg p-8">
-            <button id="back-to-app-btn" class="bg-cyan-500 text-white px-4 py-2 rounded mb-4 no-print">Kembali</button>
-            <div id="print-content"></div>
+        <div id="display-area" class="card p-6">
+            <p class="text-center text-slate-500">Masukkan nama dan klik tombol biru di atas untuk memuat data.</p>
         </div>
     </div>
 
@@ -85,160 +58,61 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
     <script>
-        // --- KONFIGURASI ---
-        const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS_I7uOP3lNEtsw6wRn1G_Kgybcs-3jOOF_iEggsz1csDp2nhIwYVSk0wEHA0Libg/pub?output=csv';
+        // CONFIG KONFIGURASI
         const firebaseConfig = {
-            apiKey: "AIzaSy...",
-            authDomain: "project-id.firebaseapp.com",
-            projectId: "project-id",
-            storageBucket: "project-id.appspot.com",
-            messagingSenderId: "...",
-            appId: "..."
+            apiKey: "AIzaSyDu75rAPfChsFt7pWQHZS5EJC94vLMvBSg",
+            authDomain: "ti-lembur.firebaseapp.com",
+            projectId: "ti-lembur",
+            storageBucket: "ti-lembur.firebasestorage.app",
+            messagingSenderId: "884467832884",
+            appId: "1:884467832884:web:38cebdb4ade5ef50abd261"
         };
-        // ------------------
+        
+        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS_I7uOP3lNEtsw6wRn1G_Kgybcs-3jOOF_iEggsz1csDp2nhIwYVSk0wEHA0Libg/pub?output=csv';
 
-        const PUBLIC_HOLIDAYS = { /* ... (Data libur tetap sama seperti kode Anda) ... */ };
+        // Inisialisasi
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        let userId, currentName;
 
-        document.addEventListener('DOMContentLoaded', () => {
-            firebase.initializeApp(firebaseConfig);
-            const db = firebase.firestore();
-            const auth = firebase.auth();
+        // Ambil data Google Sheets
+        async function loadSheet() {
+            try {
+                const res = await fetch(SHEET_URL);
+                const data = await res.text();
+                const list = data.split('\n').map(r => r.trim()).filter(r => r && r !== "Kegiatan");
+                document.getElementById('sheet-data').innerHTML = list.map(item => `<option value="${item}">`).join('');
+            } catch (e) { console.error("Gagal load spreadsheet"); }
+        }
 
-            let activities = [], workUnit = localStorage.getItem('activityTrackerWorkUnit') || '', selectedDate = null, viewMode = 'calendar', userId = null, currentRekapName = localStorage.getItem('currentRekapName') || '';
-            let sheetActivities = [];
+        // Simpan Data
+        document.getElementById('btn-add').onclick = async () => {
+            const text = document.getElementById('act-text').value;
+            if(!text || !currentName) return alert("Isi nama rekap dan kegiatan!");
+            
+            await db.collection(`users/${userId}/rekaps/${currentName}/activities`).add({
+                text: text,
+                overtimeStart: document.getElementById('act-start').value,
+                overtimeEnd: document.getElementById('act-end').value,
+                timestamp: firebase.firestore.Timestamp.now()
+            });
+            document.getElementById('act-text').value = "";
+            alert("Berhasil disimpan ke Firestore!");
+        };
 
-            // UI Elements
-            const nameInput = document.getElementById('name-input'), workUnitInput = document.getElementById('workunit-input'), monthSelect = document.getElementById('month-select'), yearSelect = document.getElementById('year-select'), contentArea = document.getElementById('content-area'), calendarViewBtn = document.getElementById('calendar-view-btn'), summaryViewBtn = document.getElementById('summary-view-btn'), appContainer = document.getElementById('app-container'), printPreviewContainer = document.getElementById('print-preview-container'), printContent = document.getElementById('print-content');
-
-            // Fetch Data dari Google Sheets
-            async function fetchSheetActivities() {
-                try {
-                    const response = await fetch(SHEET_CSV_URL);
-                    const data = await response.text();
-                    // Split CSV dan bersihkan data
-                    sheetActivities = data.split('\n').map(row => row.trim().replace(/"/g, '')).filter(row => row !== "" && row !== "Daftar Kegiatan");
-                    console.log("Kegiatan dimuat:", sheetActivities);
-                } catch (error) {
-                    console.error("Gagal mengambil data sheet:", error);
-                }
-            }
-
-            const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-            const dayNames = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
-
-            function render() {
-                calendarViewBtn.className = `w-full py-2 rounded-md ${viewMode === 'calendar' ? 'bg-cyan-500 font-bold' : 'hover:bg-slate-600'}`;
-                summaryViewBtn.className = `w-full py-2 rounded-md ${viewMode === 'summary' ? 'bg-cyan-500 font-bold' : 'hover:bg-slate-600'}`;
-                if (viewMode === 'calendar') renderCalendarView(); else renderSummaryView();
-            }
-
-            function renderCalendarView() {
-                const month = parseInt(monthSelect.value), year = parseInt(yearSelect.value);
-                const daysInMonth = new Date(year, month + 1, 0).getDate();
-                const firstDay = new Date(year, month, 1).getDay();
-                const activityDates = new Set(activities.filter(a => a.timestamp.getMonth() === month && a.timestamp.getFullYear() === year).map(a => new Date(a.timestamp.getFullYear(), a.timestamp.getMonth(), a.timestamp.getDate()).toDateString()));
-                
-                let html = `<div class="grid grid-cols-7 gap-2 mb-4 text-center text-slate-400 font-bold">${dayNames.map(d => `<div>${d}</div>`).join('')}</div><div class="grid grid-cols-7 gap-2">`;
-                for (let i = 0; i < firstDay; i++) html += `<div></div>`;
-                for (let day = 1; day <= daysInMonth; day++) {
-                    const fullDate = new Date(year, month, day);
-                    const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-                    const isSelected = selectedDate && fullDate.toDateString() === selectedDate.toDateString();
-                    const hasActivity = activityDates.has(fullDate.toDateString());
-                    const holiday = PUBLIC_HOLIDAYS[dateStr] || fullDate.getDay() === 0;
-                    
-                    html += `<div data-day="${day}" class="p-2 text-center rounded-lg cursor-pointer relative ${isSelected ? 'bg-cyan-500' : holiday ? 'text-red-400' : 'hover:bg-slate-700'}">${day}${hasActivity ? '<span class="absolute top-1 right-1 h-1.5 w-1.5 bg-amber-400 rounded-full"></span>' : ''}</div>`;
-                }
-                contentArea.innerHTML = html + `</div>`;
-                if (selectedDate) renderDailyActivities();
-                contentArea.querySelectorAll('[data-day]').forEach(el => el.onclick = () => { selectedDate = new Date(year, month, el.dataset.day); render(); });
-            }
-
-            function renderDailyActivities() {
-                const filtered = activities.filter(a => a.timestamp.toDateString() === selectedDate.toDateString());
-                let html = `<div class="mt-8 border-t border-slate-700 pt-6">
-                    <h2 class="text-xl font-bold text-cyan-400 mb-4">${selectedDate.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long'})}</h2>
-                    <div class="bg-slate-700/50 p-4 rounded-xl mb-6">
-                        <form id="add-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="md:col-span-2">
-                                <label class="text-xs text-slate-400">Pilih/Ketik Kegiatan</label>
-                                <input id="act-text" list="list-kegiatan" class="w-full bg-slate-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-cyan-500">
-                                <datalist id="list-kegiatan">
-                                    ${sheetActivities.map(act => `<option value="${act}">`).join('')}
-                                </datalist>
-                            </div>
-                            <input id="act-start" type="time" class="bg-slate-600 p-3 rounded-lg">
-                            <input id="act-end" type="time" class="bg-slate-600 p-3 rounded-lg">
-                            <button class="md:col-span-2 bg-cyan-500 py-3 rounded-lg font-bold">Simpan Kegiatan</button>
-                        </form>
-                    </div>`;
-                
-                filtered.forEach(a => {
-                    html += `<div class="bg-slate-700 p-4 rounded-lg mb-2 flex justify-between">
-                        <div><p>${a.text}</p><p class="text-xs text-slate-400">${a.overtimeStart || '-'} s/d ${a.overtimeEnd || '-'}</p></div>
-                        <button onclick="deleteActivity('${a.id}')" class="text-red-400"><i class="fa-solid fa-trash"></i></button>
-                    </div>`;
-                });
-                contentArea.innerHTML += html + `</div>`;
-                document.getElementById('add-form').onsubmit = handleAdd;
-            }
-
-            // Fungsi Firebase (Disesuaikan untuk GitHub Pages)
-            async function handleAdd(e) {
-                e.preventDefault();
-                const text = document.getElementById('act-text').value, start = document.getElementById('act-start').value, end = document.getElementById('act-end').value;
-                if(!text || !userId || !currentRekapName) return alert("Isi Nama & Kegiatan!");
-                const ts = new Date(selectedDate);
-                await db.collection(`users/${userId}/rekaps/${currentRekapName}/activities`).add({
-                    text, overtimeStart: start, overtimeEnd: end, timestamp: firebase.firestore.Timestamp.fromDate(ts)
-                });
-                render();
-            }
-
-            window.deleteActivity = async (id) => {
-                await db.collection(`users/${userId}/rekaps/${currentRekapName}/activities`).doc(id).delete();
-            };
-
-            function listenActivities() {
-                if(!currentRekapName || !userId) return;
-                db.collection(`users/${userId}/rekaps/${currentRekapName}/activities`).onSnapshot(s => {
-                    activities = s.docs.map(d => ({id: d.id, ...d.data(), timestamp: d.data().timestamp.toDate()}));
-                    render();
-                });
-            }
-
-            // --- INIT APP ---
-            async function init() {
-                await fetchSheetActivities();
-                nameInput.value = currentRekapName;
-                workUnitInput.value = workUnit;
-                
-                // Populate Month/Year
-                const now = new Date();
-                monthNames.forEach((m, i) => monthSelect.innerHTML += `<option value="${i}" ${i===now.getMonth()?'selected':''}>${m}</option>`);
-                for(let y=2024; y<=2026; y++) yearSelect.innerHTML += `<option value="${y}" ${y===now.getFullYear()?'selected':''}>${y}</option>`;
-
-                // Auth
-                auth.onAuthStateChanged(async (user) => {
-                    if (!user) await auth.signInAnonymously();
-                    userId = auth.currentUser.uid;
-                    document.getElementById('user-id-display').textContent = `ID: ${userId}`;
-                    listenActivities();
-                });
-
-                // Event Listeners
-                document.getElementById('load-rekap-btn').onclick = () => {
-                    currentRekapName = nameInput.value.trim();
-                    localStorage.setItem('currentRekapName', currentRekapName);
-                    listenActivities();
-                };
-                calendarViewBtn.onclick = () => { viewMode = 'calendar'; render(); };
-                summaryViewBtn.onclick = () => { viewMode = 'summary'; render(); };
-                // ... (Sisipkan fungsi Word & Print Anda sebelumnya di sini) ...
-            }
-
-            init();
+        // Login & Init
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) await auth.signInAnonymously();
+            userId = auth.currentUser.uid;
+            document.getElementById('status-id').innerText = `Tersambung (ID: ${userId})`;
+            loadSheet();
         });
+
+        document.getElementById('btn-load').onclick = () => {
+            currentName = document.getElementById('name-input').value.trim();
+            if(currentName) alert("Data rekap untuk " + currentName + " siap.");
+        };
     </script>
 </body>
 </html>
