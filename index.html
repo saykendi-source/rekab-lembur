@@ -8,53 +8,48 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: white; }
+        .card { background: #1e293b; border: 1px solid #334155; border-radius: 1rem; }
         @media print { .no-print { display: none !important; } }
     </style>
 </head>
-<body class="bg-slate-900 text-white min-h-screen">
+<body class="p-4 md:p-8">
 
-    <div id="app-container">
-        <div class="max-w-4xl mx-auto p-4 md:p-8">
-            <header class="text-center mb-8">
-                <h1 class="text-4xl md:text-5xl font-bold text-cyan-400">Rekap Kegiatan Lembur</h1>
-                <p id="user-id-display" class="text-xs text-slate-500 mt-2">Menghubungkan...</p>
-            </header>
+    <div id="app-container" class="max-w-4xl mx-auto">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-cyan-400">Rekap Kegiatan Lembur</h1>
+            <p id="user-id-display" class="text-xs text-slate-500 mt-2">Menghubungkan ke Firebase...</p>
+        </header>
 
-            <main class="bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-700">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 pb-6 border-b border-slate-700">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-400 mb-2">Nama Pengguna</label>
-                        <div class="flex gap-2">
-                            <input id="name-input" type="text" placeholder="Ketik nama..." class="w-full bg-slate-700 border-slate-600 rounded-lg p-3 outline-none focus:ring-2 focus:ring-cyan-500"/>
-                            <button id="load-rekap-btn" class="bg-cyan-500 hover:bg-cyan-600 px-4 rounded-lg flex items-center transition-all"><i class="fa-solid fa-sync"></i></button>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-400 mb-2">Unit Kerja</label>
-                        <input id="workunit-input" type="text" placeholder="Laboratorium IT UMY" class="w-full bg-slate-700 border-slate-600 rounded-lg p-3 outline-none focus:ring-2 focus:ring-cyan-500"/>
-                    </div>
+        <div class="card p-6 mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Nama Pengguna</label>
+                <div class="flex gap-2">
+                    <input id="name-input" type="text" placeholder="Ketik nama..." class="w-full bg-slate-800 p-3 rounded-lg outline-none focus:ring-2 focus:ring-cyan-500 border border-slate-700">
+                    <button id="load-rekap-btn" title="Sinkronisasi Data" class="bg-cyan-600 px-4 rounded-lg hover:bg-cyan-500 transition-all"><i class="fa-solid fa-sync"></i></button>
                 </div>
-
-                <div class="flex flex-col sm:flex-row gap-4 mb-6">
-                    <select id="month-select" class="flex-1 bg-slate-700 rounded-lg p-3 outline-none"></select>
-                    <select id="year-select" class="flex-1 bg-slate-700 rounded-lg p-3 outline-none"></select>
-                </div>
-                
-                <div class="flex justify-center gap-2 mb-6 p-1 bg-slate-700 rounded-lg">
-                    <button id="calendar-view-btn" class="w-full py-2 rounded-md transition-all">Kalender</button>
-                    <button id="summary-view-btn" class="w-full py-2 rounded-md transition-all">Rekap Bulanan</button>
-                </div>
-
-                <div id="content-area"></div>
-            </main>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Unit Kerja</label>
+                <input id="workunit-input" type="text" placeholder="Laboratorium IT UMY" class="w-full bg-slate-800 p-3 rounded-lg outline-none focus:ring-2 focus:ring-cyan-500 border border-slate-700">
+            </div>
         </div>
+
+        <div class="flex flex-col sm:flex-row gap-4 mb-6">
+            <select id="month-select" class="flex-1 bg-slate-800 p-3 rounded-lg outline-none border border-slate-700"></select>
+            <select id="year-select" class="flex-1 bg-slate-800 p-3 rounded-lg outline-none border border-slate-700"></select>
+        </div>
+        
+        <div class="flex justify-center gap-2 mb-6 p-1 bg-slate-800 rounded-lg border border-slate-700">
+            <button id="calendar-view-btn" class="w-full py-2 rounded-md transition-all">Kalender</button>
+            <button id="summary-view-btn" class="w-full py-2 rounded-md transition-all">Rekap Bulanan</button>
+        </div>
+
+        <div id="content-area"></div>
     </div>
 
-    <div id="print-preview-container" class="hidden bg-gray-200 p-8 min-h-screen">
-        <div class="max-w-4xl mx-auto bg-white text-black shadow-lg p-8 rounded-lg">
+    <div id="print-preview-container" class="hidden bg-gray-200 p-8 min-h-screen text-black">
+        <div class="max-w-4xl mx-auto bg-white shadow-lg p-8 rounded-lg">
             <button id="back-to-app-btn" class="bg-slate-700 text-white px-4 py-2 rounded mb-6 no-print">Kembali</button>
             <div id="print-content"></div>
         </div>
@@ -74,12 +69,13 @@
             appId: "1:884467832884:web:38cebdb4ade5ef50abd261"
         };
 
-        const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS_I7uOP3lNEtsw6wRn1G_Kgybcs-3jOOF_iEggsz1csDp2nhIwYVSk0wEHA0Libg/pubhtml';
+        // LINK SUDAH DIPERBAIKI KE FORMAT CSV
+        const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS_I7uOP3lNEtsw6wRn1G_Kgybcs-3jOOF_iEggsz1csDp2nhIwYVSk0wEHA0Libg/pub?output=csv';
 
         const PUBLIC_HOLIDAYS = {
-            "2025-01-01": "Tahun Baru", "2025-03-31": "Idul Fitri", "2025-04-01": "Idul Fitri", "2025-08-17": "Kemerdekaan RI", "2025-12-25": "Natal",
-            "2026-01-01": "Tahun Baru", "2026-03-20": "Idul Fitri", "2026-03-21": "Idul Fitri", "2026-08-17": "Kemerdekaan RI", "2026-12-25": "Natal"
-            // Tambahkan list tanggal merah lainnya di sini sesuai kebutuhan
+            "2025-05-01": "Hari Buruh", "2025-05-12": "Hari Waisak", "2025-05-29": "Kenaikan Yesus Kristus",
+            "2026-05-01": "Hari Buruh", "2026-05-14": "Kenaikan Yesus Kristus", "2026-05-31": "Hari Waisak",
+            "2025-01-01": "Tahun Baru", "2025-08-17": "Kemerdekaan RI", "2025-12-25": "Natal"
         };
 
         firebase.initializeApp(firebaseConfig);
@@ -92,19 +88,24 @@
         let unsub = null;
 
         async function fetchSheetData() {
-            if (!SHEET_CSV_URL.startsWith('http')) return;
             try {
                 const res = await fetch(SHEET_CSV_URL);
                 const text = await res.text();
-                sheetKegiatan = text.split('\n').map(r => r.trim().replace(/"/g, '')).filter(r => r && r !== "Kegiatan");
-            } catch (e) { console.error("Sheet Error"); }
+                // Parsing sederhana: ambil kolom pertama setiap baris
+                sheetKegiatan = text.split('\n').map(row => {
+                    const cols = row.split(',');
+                    return cols[0].trim().replace(/"/g, '');
+                }).filter(val => val && val !== "Kegiatan" && val !== "Daftar Kegiatan");
+                console.log("Kegiatan berhasil dimuat dari Sheet");
+            } catch (e) { console.error("Gagal memuat Google Sheets:", e); }
         }
 
         function render() {
-            const calendarViewBtn = document.getElementById('calendar-view-btn');
-            const summaryViewBtn = document.getElementById('summary-view-btn');
-            calendarViewBtn.className = `w-full py-2 ${viewMode === 'calendar' ? 'bg-cyan-500 font-bold' : 'hover:bg-slate-700 text-slate-400'}`;
-            summaryViewBtn.className = `w-full py-2 ${viewMode === 'summary' ? 'bg-cyan-500 font-bold' : 'hover:bg-slate-700 text-slate-400'}`;
+            const calendarBtn = document.getElementById('calendar-view-btn');
+            const summaryBtn = document.getElementById('summary-view-btn');
+            calendarBtn.className = `w-full py-2 rounded-md ${viewMode === 'calendar' ? 'bg-cyan-500 font-bold' : 'hover:bg-slate-700 text-slate-400'}`;
+            summaryBtn.className = `w-full py-2 rounded-md ${viewMode === 'summary' ? 'bg-cyan-500 font-bold' : 'hover:bg-slate-700 text-slate-400'}`;
+            
             if (viewMode === 'calendar') renderCalendar(); else renderSummary();
         }
 
@@ -123,39 +124,43 @@
             for (let d = 1; d <= daysInMonth; d++) {
                 const curDate = new Date(y, m, d);
                 const dateKey = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-                const isSelected = selectedDate && curDate.toDateString() === selectedDate.toDateString();
                 const holidayName = PUBLIC_HOLIDAYS[dateKey];
                 const isSunday = curDate.getDay() === 0;
+                const isSelected = selectedDate && curDate.toDateString() === selectedDate.toDateString();
 
-                let colorClass = isSelected ? 'bg-cyan-500 text-white font-bold' : (holidayName || isSunday) ? 'text-red-400 bg-red-400/10 font-bold' : 'bg-slate-700/30 hover:bg-slate-700';
+                let color = isSelected ? 'bg-cyan-500 text-white font-bold' : (holidayName || isSunday) ? 'text-red-400 bg-red-400/10 font-bold' : 'bg-slate-700/30 hover:bg-slate-700';
 
-                html += `<div data-day="${d}" title="${holidayName || ''}" class="p-3 text-center rounded-xl cursor-pointer relative transition-all ${colorClass}">
-                    ${d}${hasDataDates.has(curDate.toDateString()) ? '<span class="absolute top-1 right-1 h-2 w-2 bg-amber-400 rounded-full border-2 border-slate-800"></span>' : ''}
+                html += `<div data-day="${d}" title="${holidayName || ''}" class="p-3 text-center rounded-xl cursor-pointer relative transition-all ${color}">
+                    ${d}${hasDataDates.has(curDate.toDateString()) ? '<span class="absolute top-1 right-1 h-2 w-2 bg-amber-400 rounded-full border border-slate-800"></span>' : ''}
                 </div>`;
             }
             document.getElementById('content-area').innerHTML = html + `</div>`;
             if (selectedDate) renderDailyInput();
-            document.querySelectorAll('[data-day]').forEach(el => el.onclick = () => { selectedDate = new Date(y, m, el.dataset.day); render(); });
+            document.querySelectorAll('[data-day]').forEach(el => el.onclick = () => { 
+                selectedDate = new Date(y, m, el.dataset.day); 
+                render(); 
+            });
         }
 
         function renderDailyInput() {
             const daily = activities.filter(a => a.timestamp.toDateString() === selectedDate.toDateString());
             let html = `<div class="mt-8 border-t border-slate-700 pt-6 animate-fade-in">
                 <h2 class="text-xl font-bold text-cyan-400 mb-4">${selectedDate.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long'})}</h2>
-                <form id="add-form" class="bg-slate-700/50 p-5 rounded-2xl border border-slate-600 grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <form id="add-form" class="card p-5 grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                     <div class="md:col-span-3">
-                        <input id="inp-text" list="kegiatan-list" class="w-full bg-slate-800 p-3 rounded-lg outline-none border border-slate-600 focus:border-cyan-500" placeholder="Pilih atau ketik kegiatan...">
+                        <label class="text-xs text-slate-400 block mb-1">Detail Kegiatan (Otomatis dari Sheet)</label>
+                        <input id="inp-text" list="kegiatan-list" class="w-full bg-slate-800 p-3 rounded-lg outline-none border border-slate-700 focus:border-cyan-500" placeholder="Pilih atau ketik kegiatan...">
                         <datalist id="kegiatan-list">${sheetKegiatan.map(k => `<option value="${k}">`).join('')}</datalist>
                     </div>
-                    <input id="inp-start" type="time" class="bg-slate-800 p-3 rounded-lg border border-slate-600">
-                    <input id="inp-end" type="time" class="bg-slate-800 p-3 rounded-lg border border-slate-600">
-                    <button type="submit" id="btn-submit" class="bg-cyan-500 hover:bg-cyan-400 py-3 rounded-lg font-bold transition-all">Simpan Kegiatan</button>
+                    <input id="inp-start" type="time" class="bg-slate-800 p-3 rounded-lg border border-slate-700">
+                    <input id="inp-end" type="time" class="bg-slate-800 p-3 rounded-lg border border-slate-700">
+                    <button type="submit" id="btn-save" class="bg-cyan-500 hover:bg-cyan-400 py-3 rounded-lg font-bold">Simpan</button>
                 </form>
                 <div class="space-y-3">`;
             
             daily.forEach(a => {
-                html += `<div class="bg-slate-700 p-4 rounded-xl flex justify-between items-center border border-slate-600">
-                    <div><p class="font-medium">${a.text}</p><p class="text-xs text-amber-400">Lembur: ${a.overtimeStart || '-'} s/d ${a.overtimeEnd || '-'}</p></div>
+                html += `<div class="card p-4 flex justify-between items-center border-slate-700">
+                    <div><p class="font-medium">${a.text}</p><p class="text-xs text-amber-400 font-semibold">${a.overtimeStart || '-'} s/d ${a.overtimeEnd || '-'}</p></div>
                     <button onclick="deleteAct('${a.id}')" class="text-slate-500 hover:text-red-500 p-2"><i class="fa-solid fa-trash"></i></button>
                 </div>`;
             });
@@ -168,58 +173,58 @@
             const text = document.getElementById('inp-text').value;
             const start = document.getElementById('inp-start').value;
             const end = document.getElementById('inp-end').value;
-            const btn = document.getElementById('btn-submit');
+            const saveBtn = document.getElementById('btn-save');
 
             if (!text || !currentRekapName || !userId) {
-                return alert("Pastikan Nama Rekap sudah diisi dan sudah klik tombol Sinkron biru!");
+                alert("PENTING: Masukkan Nama di atas lalu klik tombol biru (Sinkron) dulu!");
+                return;
             }
             
             try {
-                btn.innerText = "Menyimpan...";
-                btn.disabled = true;
+                saveBtn.disabled = true; saveBtn.innerText = "Proses...";
                 await db.collection(`users/${userId}/rekaps/${currentRekapName}/activities`).add({
-                    text, overtimeStart: start, overtimeEnd: end, 
+                    text: text,
+                    overtimeStart: start,
+                    overtimeEnd: end,
                     timestamp: firebase.firestore.Timestamp.fromDate(new Date(selectedDate))
                 });
                 document.getElementById('inp-text').value = "";
-                // Data akan terupdate otomatis via onSnapshot
-            } catch (error) {
-                alert("Gagal menyimpan: " + error.message);
+            } catch (err) {
+                alert("Gagal Simpan: " + err.message);
             } finally {
-                btn.innerText = "Simpan Kegiatan";
-                btn.disabled = false;
+                saveBtn.disabled = false; saveBtn.innerText = "Simpan";
             }
         }
 
         window.deleteAct = async (id) => {
-            if(confirm("Hapus kegiatan?")) await db.collection(`users/${userId}/rekaps/${currentRekapName}/activities`).doc(id).delete();
+            if(confirm("Hapus data ini?")) await db.collection(`users/${userId}/rekaps/${currentRekapName}/activities`).doc(id).delete();
         }
 
         function renderSummary() {
             const m = parseInt(document.getElementById('month-select').value);
             const y = parseInt(document.getElementById('year-select').value);
-            document.getElementById('content-area').innerHTML = `<div class="bg-slate-700/30 p-8 rounded-2xl text-center border border-slate-700 animate-fade-in">
+            document.getElementById('content-area').innerHTML = `<div class="card p-8 text-center animate-fade-in">
                 <h3 class="text-2xl font-bold text-cyan-400 mb-6">Rekap ${monthNames[m]} ${y}</h3>
-                <button id="btn-print" class="bg-emerald-600 hover:bg-emerald-500 px-6 py-2 rounded-lg font-bold"><i class="fa-solid fa-print"></i> Pratinjau Cetak</button>
+                <button onclick="showPrintPreview()" class="bg-emerald-600 hover:bg-emerald-500 px-8 py-3 rounded-lg font-bold"><i class="fa-solid fa-print mr-2"></i> Pratinjau Cetak</button>
             </div>`;
-            document.getElementById('btn-print').onclick = showPrintPreview;
         }
 
-        function showPrintPreview() {
+        window.showPrintPreview = () => {
             const m = parseInt(document.getElementById('month-select').value);
             const y = parseInt(document.getElementById('year-select').value);
-            const ot = activities.filter(a => a.overtimeStart && a.timestamp.getMonth() === m && a.timestamp.getFullYear() === y).sort((a,b) => a.timestamp - b.timestamp);
+            const ot = activities.filter(a => a.timestamp.getMonth() === m && a.timestamp.getFullYear() === y).sort((a,b) => a.timestamp - b.timestamp);
+            
             let p = `<div class="text-center border-b-2 border-black pb-4 mb-6"><h1 class="text-xl font-bold uppercase">Rekapitulasi Lembur</h1><h2>Bulan ${monthNames[m]} ${y}</h2></div>
-                     <p class="text-sm mb-4"><b>Nama:</b> ${currentRekapName} | <b>Unit:</b> ${workUnit}</p>
-                     <table class="w-full border-collapse border border-black text-xs">
-                        <thead><tr class="bg-gray-100"><th class="border border-black p-1">Waktu</th><th class="border border-black p-1">Kegiatan</th><th class="border border-black p-1">Jam</th></tr></thead><tbody>`;
+                     <p class="mb-4"><b>Nama:</b> ${currentRekapName} | <b>Unit:</b> ${workUnit}</p>
+                     <table class="w-full border-collapse border border-black text-sm">
+                        <thead><tr class="bg-gray-100"><th class="border border-black p-2">Tanggal</th><th class="border border-black p-2">Kegiatan</th><th class="border border-black p-2">Waktu</th></tr></thead><tbody>`;
             ot.forEach(a => {
-                p += `<tr><td class="border border-black p-1">${a.timestamp.toLocaleDateString('id-ID')}</td><td class="border border-black p-1">${a.text}</td><td class="border border-black p-1 text-center">${a.overtimeStart}-${a.overtimeEnd}</td></tr>`;
+                p += `<tr><td class="border border-black p-2">${a.timestamp.toLocaleDateString('id-ID')}</td><td class="border border-black p-2">${a.text}</td><td class="border border-black p-2 text-center">${a.overtimeStart}-${a.overtimeEnd}</td></tr>`;
             });
             document.getElementById('print-content').innerHTML = p + `</tbody></table>`;
             document.getElementById('app-container').classList.add('hidden');
             document.getElementById('print-preview-container').classList.remove('hidden');
-        }
+        };
 
         async function init() {
             await fetchSheetData();
@@ -229,15 +234,16 @@
             const now = new Date();
             const mSelect = document.getElementById('month-select'), ySelect = document.getElementById('year-select');
             ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"].forEach((m, i) => mSelect.innerHTML += `<option value="${i}" ${i===now.getMonth()?'selected':''}>${m}</option>`);
-            for(let y=2025; y<=2026; y++) ySelect.innerHTML += `<option value="${y}" ${y===now.getFullYear()?'selected':''}>${y}</option>`;
+            for(let y=2024; y<=2026; y++) ySelect.innerHTML += `<option value="${y}" ${y===now.getFullYear()?'selected':''}>${y}</option>`;
 
             document.getElementById('load-rekap-btn').onclick = () => {
-                currentRekapName = document.getElementById('name-input').value.trim();
-                if(currentRekapName) {
-                    localStorage.setItem('currentRekapName', currentRekapName);
+                const name = document.getElementById('name-input').value.trim();
+                if(name) {
+                    currentRekapName = name;
+                    localStorage.setItem('currentRekapName', name);
                     startListening();
-                    alert("Sinkronisasi Berhasil!");
-                } else alert("Masukkan Nama!");
+                    alert("Data sinkron untuk: " + name);
+                } else alert("Ketik nama dulu!");
             };
             
             document.getElementById('workunit-input').oninput = (e) => {
@@ -246,12 +252,15 @@
 
             document.getElementById('calendar-view-btn').onclick = () => { viewMode = 'calendar'; render(); };
             document.getElementById('summary-view-btn').onclick = () => { viewMode = 'summary'; render(); };
-            document.getElementById('back-to-app-btn').onclick = () => { document.getElementById('app-container').classList.remove('hidden'); document.getElementById('print-preview-container').classList.add('hidden'); };
+            document.getElementById('back-to-app-btn').onclick = () => { 
+                document.getElementById('app-container').classList.remove('hidden'); 
+                document.getElementById('print-preview-container').classList.add('hidden'); 
+            };
 
             auth.onAuthStateChanged(async (user) => {
                 if (!user) await auth.signInAnonymously();
                 userId = auth.currentUser.uid;
-                document.getElementById('user-id-display').textContent = `Cloud Connected (ID: ${userId.substring(0,8)}...)`;
+                document.getElementById('user-id-display').textContent = `Cloud Sync Aktif (ID: ${userId.substring(0,6)})`;
                 startListening();
             });
             
@@ -260,10 +269,7 @@
 
         function startListening() {
             if (unsub) unsub();
-            if (!userId || !currentRekapName) {
-                document.getElementById('content-area').innerHTML = `<div class="text-center p-12 text-slate-500">Masukkan Nama Rekap dan klik tombol Biru.</div>`;
-                return;
-            }
+            if (!userId || !currentRekapName) return;
             unsub = db.collection(`users/${userId}/rekaps/${currentRekapName}/activities`).onSnapshot(s => {
                 activities = s.docs.map(d => ({id: d.id, ...d.data(), timestamp: d.data().timestamp.toDate()}));
                 render();
