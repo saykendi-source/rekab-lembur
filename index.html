@@ -632,6 +632,74 @@
             font-size: 11px !important;
           }
 
+
+
+          /* ======================================== */
+          /* WARNA FONT JADWAL DOSEN LEBIH TERBACA   */
+          /* ======================================== */
+          :root {
+            --text: #243024 !important;
+            --white: #243024 !important;
+          }
+          body,
+          #ui-overlay,
+          #ui-overlay *,
+          .jadwal-page,
+          .jadwal-page *,
+          .schedule-panel,
+          .schedule-panel *,
+          .result-panel,
+          .result-panel *,
+          #search-result,
+          #search-result * {
+            color: #263225 !important;
+            text-shadow: 0 1px 6px rgba(255, 255, 255, 0.78) !important;
+          }
+          .title-row h1,
+          .title-row-center h1,
+          h1 {
+            color: #233121 !important;
+            text-shadow: 0 2px 8px rgba(255,255,255,0.78), 0 1px 2px rgba(0,0,0,0.10) !important;
+          }
+          .glass-select-wrap,
+          .select-wrap,
+          select,
+          option,
+          .day-btn,
+          #day-selector button {
+            color: #263225 !important;
+            text-shadow: 0 1px 5px rgba(255, 255, 255, 0.82) !important;
+          }
+          .day-btn.active,
+          .day-btn.selected,
+          #day-selector button.active,
+          #day-selector button.selected,
+          .day-btn.today,
+          #day-selector button.today {
+            color: #273200 !important;
+            text-shadow: 0 1px 4px rgba(255, 255, 255, 0.62) !important;
+          }
+          #status-db,
+          .status-db,
+          .created-by,
+          .footer,
+          footer,
+          small,
+          .muted,
+          .loading,
+          #loading {
+            color: #334233 !important;
+            text-shadow: 0 1px 5px rgba(255, 255, 255, 0.78) !important;
+          }
+          .error,
+          .failed,
+          .danger,
+          .text-danger {
+            color: #9b1c1c !important;
+            text-shadow: 0 1px 5px rgba(255, 255, 255, 0.75) !important;
+          }
+          a { color: #1f3f14 !important; }
+
           @media (max-width: 480px) {
             #ui-overlay {
               width: min(97vw, 418px) !important;
