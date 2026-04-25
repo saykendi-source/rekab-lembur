@@ -6,346 +6,301 @@
   <title>MyCode - TI UMY</title>
 
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    :root {
+      --white: rgba(255,255,255,.95);
+      --soft-white: rgba(255,255,255,.82);
+      --glass: rgba(255,255,255,.15);
+      --glass-2: rgba(255,255,255,.22);
+      --line: rgba(255,255,255,.34);
+      --green: #c9f35e;
+      --green2: #aedd42;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      min-height: 100%;
       font-family: "Segoe UI", Arial, sans-serif;
     }
 
     body {
       min-height: 100vh;
-      background:
-        linear-gradient(rgba(20, 35, 25, 0.18), rgba(20, 35, 25, 0.35)),
-        url("assets/background.jpg");
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 24px;
-      color: white;
+      padding: 18px;
+      color: var(--white);
+      overflow-x: hidden;
+      background:
+        linear-gradient(rgba(235,242,248,.20), rgba(195,207,199,.30)),
+        url("assets/bg-umy.jpg") center center / cover no-repeat fixed;
     }
 
-    .phone-wrapper {
-      width: 100%;
-      max-width: 430px;
-      min-height: 760px;
-      border-radius: 42px;
-      padding: 26px 22px;
-      background: rgba(255, 255, 255, 0.20);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border: 1.5px solid rgba(255, 255, 255, 0.55);
-      box-shadow:
-        0 25px 70px rgba(0, 0, 0, 0.35),
-        inset 0 0 25px rgba(255, 255, 255, 0.20);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .phone-wrapper::before {
+    body::before {
       content: "";
-      position: absolute;
-      inset: 10px;
-      border-radius: 36px;
-      border: 1px solid rgba(255, 255, 255, 0.35);
+      position: fixed;
+      inset: 0;
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      background: rgba(255,255,255,.04);
       pointer-events: none;
     }
 
-    .profile-icon {
-      width: 54px;
-      height: 54px;
-      border-radius: 50%;
-      margin: 0 auto 22px;
-      background: rgba(255, 255, 255, 0.22);
-      border: 1px solid rgba(255, 255, 255, 0.45);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.20);
-      font-size: 24px;
+    .app {
+      position: relative;
+      width: min(92vw, 430px);
+      min-height: 860px;
+      padding: 24px 18px 24px;
+      border-radius: 54px;
+      background: rgba(255,255,255,.14);
+      border: 2px solid rgba(255,255,255,.36);
+      box-shadow: 0 28px 80px rgba(0,0,0,.16), inset 0 1px 0 rgba(255,255,255,.28);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      overflow: hidden;
+      z-index: 1;
     }
 
-    .search-box {
-      height: 54px;
+    .app::before {
+      content: "";
+      position: absolute;
+      inset: 13px;
+      border-radius: 44px;
+      border: 1.5px solid rgba(255,255,255,.35);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .profile {
+      position: relative;
+      z-index: 4;
+      width: 62px;
+      height: 62px;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,.17);
+      border: 1px solid rgba(255,255,255,.32);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 10px 30px rgba(0,0,0,.10);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .profile svg { width: 30px; height: 30px; fill: rgba(255,255,255,.88); }
+
+    .top-panel {
+      position: relative;
+      z-index: 3;
+      border-radius: 38px;
+      padding: 22px 18px 26px;
+      background: rgba(255,255,255,.13);
+      border: 1.5px solid rgba(255,255,255,.24);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.20);
+    }
+
+    .search {
+      height: 56px;
       border-radius: 999px;
       padding: 0 20px;
-      margin-bottom: 28px;
-      background: rgba(255, 255, 255, 0.18);
-      border: 1px solid rgba(255, 255, 255, 0.45);
+      margin-bottom: 26px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      color: rgba(255, 255, 255, 0.92);
-      box-shadow: inset 0 0 18px rgba(255, 255, 255, 0.08);
+      background: rgba(255,255,255,.11);
+      border: 1.5px solid rgba(255,255,255,.25);
+      color: rgba(255,255,255,.88);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.15);
     }
 
-    .search-box span {
-      font-size: 15px;
-      letter-spacing: 0.2px;
+    .search span { font-size: 16px; font-weight: 500; }
+    .search svg { width: 24px; height: 24px; stroke: rgba(255,255,255,.92); stroke-width: 2.6; }
+
+    .hero {
+      position: relative;
+      min-height: 285px;
+      border-radius: 36px;
+      padding: 26px 24px 22px;
+      background: rgba(255,255,255,.13);
+      border: 1.8px solid rgba(255,255,255,.34);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.24), 0 15px 36px rgba(0,0,0,.08);
+      overflow: hidden;
     }
 
-    .hero-card {
-      border-radius: 34px;
-      padding: 28px 24px;
-      min-height: 190px;
-      background: rgba(255, 255, 255, 0.22);
-      border: 1.5px solid rgba(255, 255, 255, 0.58);
-      box-shadow:
-        0 18px 40px rgba(0, 0, 0, 0.18),
-        inset 0 0 22px rgba(255, 255, 255, 0.15);
-      margin-bottom: 28px;
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -54px;
+      top: 102px;
+      width: 116px;
+      height: 205px;
+      border-radius: 26px;
+      background: rgba(255,255,255,.09);
+      border: 1.3px solid rgba(255,255,255,.20);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.18);
     }
 
     .brand {
+      position: relative;
+      z-index: 2;
       display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 30px;
+      align-items: flex-start;
+      gap: 18px;
+      margin-top: 50px;
     }
 
-    .brand-logo {
-      width: 64px;
-      height: 64px;
-      border-radius: 20px;
-      background: rgba(255, 255, 255, 0.92);
-      color: #6da51f;
-      font-size: 34px;
-      font-weight: 900;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.18);
-    }
+    .logo-wrap { width: 88px; height: 88px; flex: 0 0 88px; display: flex; align-items: center; justify-content: center; }
+    .logo-wrap img { width: 88px; height: 88px; object-fit: contain; display: block; filter: drop-shadow(0 4px 10px rgba(0,0,0,.12)) brightness(1.08); }
 
     .brand-text h1 {
-      font-size: 32px;
+      font-size: 34px;
       line-height: 1;
-      font-weight: 900;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-    }
-
-    .brand-text p {
-      margin-top: 8px;
-      font-size: 15px;
-      line-height: 1.35;
-      color: rgba(255, 255, 255, 0.92);
-    }
-
-    .progress-row {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .progress-bar {
-      flex: 1;
-      height: 10px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.35);
-      overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.35);
-    }
-
-    .progress-fill {
-      width: 58%;
-      height: 100%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, #a6db49, #d4ff7a);
-      box-shadow: 0 0 14px rgba(190, 255, 90, 0.9);
-    }
-
-    .time {
-      font-size: 13px;
-      font-weight: 700;
-      color: rgba(255, 255, 255, 0.95);
-    }
-
-    .menu-panel {
-      border-radius: 38px;
-      padding: 32px 20px 28px;
-      background: rgba(255, 255, 255, 0.24);
-      border: 1.5px solid rgba(255, 255, 255, 0.55);
-      box-shadow:
-        inset 0 0 28px rgba(255, 255, 255, 0.12),
-        0 18px 45px rgba(0, 0, 0, 0.22);
-    }
-
-    .sparkle {
-      text-align: center;
-      margin-bottom: 24px;
-      font-size: 20px;
-      color: white;
-      text-shadow: 0 0 12px rgba(255, 255, 255, 0.95);
-    }
-
-    .menu-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px 16px;
-    }
-
-    .menu-btn {
-      text-decoration: none;
-      color: white;
-      text-align: center;
-      display: block;
-      transition: 0.25s ease;
-    }
-
-    .menu-btn:hover {
-      transform: translateY(-5px) scale(1.03);
-    }
-
-    .icon-box {
-      width: 86px;
-      height: 86px;
-      margin: 0 auto 10px;
-      border-radius: 26px;
-      background: rgba(255, 255, 255, 0.22);
-      border: 1.5px solid rgba(255, 255, 255, 0.62);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 38px;
-      box-shadow:
-        0 10px 25px rgba(0, 0, 0, 0.18),
-        inset 0 0 18px rgba(255, 255, 255, 0.14);
-    }
-
-    .menu-title {
-      font-size: 14px;
       font-weight: 800;
-      line-height: 1.25;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.32);
+      letter-spacing: -1px;
+      color: rgba(255,255,255,.96);
+      text-shadow: 0 2px 12px rgba(0,0,0,.10);
+      margin-bottom: 12px;
     }
 
-    .footer {
-      margin-top: 28px;
-      text-align: center;
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.84);
+    .brand-text p { font-size: 17px; line-height: 1.32; font-weight: 500; color: rgba(255,255,255,.86); text-shadow: 0 2px 8px rgba(0,0,0,.08); }
+
+    .progress-line { position: relative; z-index: 2; margin-top: 36px; display: flex; align-items: center; gap: 14px; }
+    .progress { flex: 1; height: 11px; border-radius: 999px; background: rgba(255,255,255,.23); border: 1px solid rgba(255,255,255,.16); overflow: hidden; box-shadow: inset 0 1px 0 rgba(255,255,255,.18); }
+    .progress div { width: 57%; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--green2), #d9ff77); box-shadow: 0 0 18px rgba(201,243,94,.85); }
+    .clock-widget { min-width: 112px; padding: 8px 12px; border-radius: 14px; background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.18); box-shadow: inset 0 1px 0 rgba(255,255,255,.16); text-align: center; line-height: 1.15; }
+    .clock-time { font-size: 18px; font-weight: 800; color: rgba(255,255,255,.95); letter-spacing: .5px; }
+    .clock-zone { font-size: 12px; font-weight: 700; color: rgba(255,255,255,.78); margin-top: 4px; letter-spacing: .9px; }
+
+    .bottom-panel {
+      position: relative;
+      z-index: 4;
+      margin-top: -18px;
+      padding: 42px 16px 30px;
+      border-radius: 44px 44px 36px 36px;
+      background: rgba(255,255,255,.15);
+      border: 1.7px solid rgba(255,255,255,.28);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.20), 0 15px 36px rgba(0,0,0,.06);
     }
 
-    .footer b {
-      color: white;
+    .bottom-panel::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: -36px;
+      width: 76%;
+      height: 76px;
+      background: rgba(255,255,255,.15);
+      border-top: 1.7px solid rgba(255,255,255,.28);
+      border-left: 1.7px solid rgba(255,255,255,.28);
+      border-right: 1.7px solid rgba(255,255,255,.20);
+      border-radius: 0 40px 0 0;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      pointer-events: none;
     }
+
+    .star { position: relative; z-index: 2; text-align: center; margin-bottom: 25px; font-size: 23px; color: rgba(255,255,255,.94); text-shadow: 0 0 13px rgba(255,255,255,.75); }
+    .menu { position: relative; z-index: 2; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px 14px; }
+    .menu a { display: block; text-decoration: none; color: #fff; text-align: center; -webkit-tap-highlight-color: transparent; transition: transform .22s ease, filter .22s ease; }
+    .menu a:hover { transform: translateY(-5px); filter: brightness(1.08); }
+    .menu a:active { transform: scale(.96); }
+
+    .icon-card {
+      width: 94px;
+      height: 94px;
+      margin: 0 auto 13px;
+      border-radius: 29px;
+      background: rgba(255,255,255,.15);
+      border: 1.7px solid rgba(255,255,255,.34);
+      display: grid;
+      place-items: center;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.23), 0 10px 20px rgba(0,0,0,.06);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .icon-card svg { width: 58px; height: 58px; filter: drop-shadow(0 8px 10px rgba(0,0,0,.14)) drop-shadow(0 -1px 1px rgba(255,255,255,.25)); }
+    .label { font-size: 16px; font-weight: 800; line-height: 1.28; color: rgba(255,255,255,.96); text-shadow: 0 2px 8px rgba(0,0,0,.14); }
 
     @media (max-width: 480px) {
-      body {
-        padding: 12px;
-        align-items: flex-start;
-      }
-
-      .phone-wrapper {
-        min-height: 100vh;
-        border-radius: 32px;
-        padding: 22px 16px;
-      }
-
-      .hero-card {
-        padding: 24px 20px;
-      }
-
-      .brand-logo {
-        width: 56px;
-        height: 56px;
-        font-size: 30px;
-      }
-
-      .brand-text h1 {
-        font-size: 28px;
-      }
-
-      .icon-box {
-        width: 76px;
-        height: 76px;
-        font-size: 34px;
-        border-radius: 23px;
-      }
-
-      .menu-grid {
-        gap: 22px 10px;
-      }
-
-      .menu-title {
-        font-size: 13px;
-      }
+      body { padding: 10px; align-items: flex-start; }
+      .app { width: 100%; min-height: calc(100vh - 20px); border-radius: 42px; padding: 18px 14px 20px; }
+      .app::before { inset: 10px; border-radius: 34px; }
+      .profile { width: 54px; height: 54px; margin-bottom: 14px; }
+      .top-panel { border-radius: 32px; padding: 18px 14px 22px; }
+      .search { height: 52px; margin-bottom: 22px; }
+      .hero { min-height: 255px; padding: 22px 18px; }
+      .brand { margin-top: 42px; gap: 12px; }
+      .logo-wrap { width: 72px; height: 72px; flex-basis: 72px; }
+      .logo-wrap img { width: 72px; height: 72px; }
+      .clock-widget { min-width: 96px; padding: 7px 10px; }
+      .clock-time { font-size: 16px; }
+      .brand-text h1 { font-size: 30px; }
+      .brand-text p { font-size: 16px; }
+      .bottom-panel { padding: 40px 12px 26px; }
+      .menu { gap: 25px 8px; }
+      .icon-card { width: 82px; height: 82px; border-radius: 25px; }
+      .icon-card svg { width: 52px; height: 52px; }
+      .label { font-size: 14px; }
     }
   </style>
 </head>
 
 <body>
-  <main class="phone-wrapper">
-
-    <div class="profile-icon">👤</div>
-
-    <div class="search-box">
-      <span>Running text</span>
-      <span>🔍</span>
+  <main class="app" aria-label="MyCode TI UMY">
+    <div class="profile" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M12 12.2c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4Zm0 2c-3 0-7 1.5-7 4.5V20h14v-1.3c0-3-4-4.5-7-4.5Z"/></svg>
     </div>
 
-    <section class="hero-card">
-      <div class="brand">
-        <div class="brand-logo">TI</div>
-        <div class="brand-text">
-          <h1>MyCode</h1>
-          <p>Decoding Your<br>Academic Journey</p>
-        </div>
+    <section class="top-panel">
+      <div class="search">
+        <span>Running text</span>
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7"></circle><path d="m16.5 16.5 4 4"></path></svg>
       </div>
 
-      <div class="progress-row">
-        <div class="progress-bar">
-          <div class="progress-fill"></div>
+      <div class="hero">
+        <div class="brand">
+          <div class="logo-wrap">
+            <img src="assets/logo-ti.png" alt="Logo TI UMY">
+          </div>
+          <div class="brand-text"><h1>MyCode</h1><p>Decoding Your<br>Academic Journey</p></div>
         </div>
-        <div class="time">08:59 WIB</div>
+        <div class="progress-line"><div class="progress"><div></div></div><div class="clock-widget" aria-label="Jam WIB"><div class="clock-time" id="clock">00:00</div><div class="clock-zone">WIB</div></div></div>
       </div>
     </section>
 
-    <section class="menu-panel">
-      <div class="sparkle">✦</div>
-
-      <div class="menu-grid">
-
-        <a class="menu-btn" href="jadwal-dosen.html">
-          <div class="icon-box">📅</div>
-          <div class="menu-title">Jadwal<br>Dosen</div>
-        </a>
-
-        <a class="menu-btn" href="ruang-kuliah.html">
-          <div class="icon-box">🏠</div>
-          <div class="menu-title">Ruang<br>Kuliah</div>
-        </a>
-
-        <a class="menu-btn" href="agenda-prodi.html">
-          <div class="icon-box">📋</div>
-          <div class="menu-title">Agenda<br>Prodi</div>
-        </a>
-
-        <a class="menu-btn" href="kkn.html">
-          <div class="icon-box">👥</div>
-          <div class="menu-title">KKN</div>
-        </a>
-
-        <a class="menu-btn" href="magang.html">
-          <div class="icon-box">🤖</div>
-          <div class="menu-title">Magang</div>
-        </a>
-
-        <a class="menu-btn" href="skripsi.html">
-          <div class="icon-box">📝</div>
-          <div class="menu-title">Skripsi</div>
-        </a>
-
-      </div>
+    <section class="bottom-panel">
+      <div class="star">✦</div>
+      <nav class="menu" aria-label="Menu utama">
+        <a href="jadwal-dosen.html" aria-label="Buka halaman Jadwal Dosen"><div class="icon-card"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="10" y="14" width="44" height="42" rx="8" fill="#f3f5ee"/><rect x="10" y="20" width="44" height="10" rx="4" fill="#c9f35e"/><rect x="17" y="36" width="9" height="9" rx="2" fill="#9bd33d"/><rect x="28" y="36" width="9" height="9" rx="2" fill="#9bd33d"/><rect x="39" y="36" width="9" height="9" rx="2" fill="#9bd33d"/><rect x="17" y="47" width="9" height="6" rx="2" fill="#9bd33d"/><rect x="28" y="47" width="9" height="6" rx="2" fill="#9bd33d"/><path d="M20 9v12M44 9v12" stroke="#e9e9e9" stroke-width="6" stroke-linecap="round"/><path d="M20 9v12M44 9v12" stroke="#bce85b" stroke-width="3" stroke-linecap="round"/></svg></div><div class="label">Jadwal<br>Dosen</div></a>
+        <a href="ruang-kuliah.html" aria-label="Buka halaman Ruang Kuliah"><div class="icon-card"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M12 31 32 13l20 18v22a5 5 0 0 1-5 5H17a5 5 0 0 1-5-5V31Z" fill="#eef1ea"/><path d="M23 58V42a9 9 0 0 1 18 0v16" fill="#bce85b"/><path d="M8 32 32 10l24 22" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 32 32 10l24 22" fill="none" stroke="#e5e8e0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><rect x="41" y="18" width="7" height="12" rx="3" fill="#f2f4ef"/></svg></div><div class="label">Ruang<br>Kuliah</div></a>
+        <a href="agenda-prodi.html" aria-label="Buka halaman Agenda Prodi"><div class="icon-card"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="17" y="9" width="34" height="48" rx="6" fill="#f1f2ee"/><rect x="21" y="14" width="26" height="7" rx="3" fill="#d6d8d4"/><circle cx="26" cy="31" r="6" fill="#c9f35e"/><path d="m23 31 2 2.2 4-4.4" stroke="#7faf28" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M35 29h10M35 35h8M24 44h22M24 51h16" stroke="#c8cbc5" stroke-width="3" stroke-linecap="round"/></svg></div><div class="label">Agenda<br>Prodi</div></a>
+        <a href="kkn.html" aria-label="Buka halaman KKN"><div class="icon-card"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="10" y="10" width="21" height="15" rx="4" fill="#c9f35e"/><rect x="35" y="8" width="20" height="16" rx="4" fill="#f0f2ed"/><path d="M17 25l-3 6M43 24l5 6" stroke="#dbe0d4" stroke-width="3" stroke-linecap="round"/><circle cx="22" cy="35" r="8" fill="#f4f4f1"/><circle cx="42" cy="35" r="8" fill="#f4f4f1"/><circle cx="32" cy="31" r="9" fill="#ffffff"/><path d="M12 56c1-10 7-15 15-15s14 5 15 15" fill="#f3f4ef"/><path d="M27 58c1-12 8-18 17-18s16 6 17 18" fill="#eff1ec"/><path d="M3 58c1-12 8-18 17-18s16 6 17 18" fill="#eff1ec"/><path d="M17 16h8M40 14h10M40 19h7" stroke="#91c735" stroke-width="2" stroke-linecap="round"/></svg></div><div class="label">KKN</div></a>
+        <a href="magang.html" aria-label="Buka halaman Magang"><div class="icon-card"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="16" y="20" width="37" height="30" rx="15" fill="#edf1ea"/><rect x="21" y="25" width="27" height="17" rx="9" fill="#3c4245"/><circle cx="29" cy="34" r="3" fill="#c9f35e"/><circle cx="41" cy="34" r="3" fill="#c9f35e"/><path d="M25 20V12M44 20V12" stroke="#ecf0e8" stroke-width="4" stroke-linecap="round"/><circle cx="25" cy="11" r="3" fill="#f1f3ef"/><circle cx="44" cy="11" r="3" fill="#f1f3ef"/><circle cx="13" cy="35" r="7" fill="#c9f35e"/><path d="M7 47c2-5 6-8 12-8s9 3 11 8" fill="#dff1a8"/><path d="M10 35h6" stroke="#85b52b" stroke-width="2" stroke-linecap="round"/></svg></div><div class="label">Magang</div></a>
+        <a href="skripsi.html" aria-label="Buka halaman Skripsi"><div class="icon-card"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="12" y="12" width="40" height="40" rx="3" fill="none" stroke="#f4f4f4" stroke-width="4" stroke-dasharray="6 5"/><text x="32" y="43" text-anchor="middle" font-family="Georgia, serif" font-size="36" font-weight="700" fill="#c9f35e">T</text></svg></div><div class="label">Skripsi</div></a>
+      </nav>
     </section>
-
-    <div class="footer">
-      Created by <b>@saykendi</b>
-    </div>
-
   </main>
+  <script>
+    function updateClock() {
+      const now = new Date();
+      const time = new Intl.DateTimeFormat("id-ID", {
+        timeZone: "Asia/Jakarta",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+      }).format(now).replace(".", ":");
+      document.getElementById("clock").textContent = time;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+  </script>
 </body>
 </html>
