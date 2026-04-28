@@ -830,6 +830,48 @@
         font-size: 16px !important;
       }
     }
+
+    /* === Hilangkan bundaran profil atas dan rapikan ukuran home === */
+    .profile {
+      display: none !important;
+    }
+
+    .app {
+      padding-top: 22px !important;
+      min-height: 805px !important;
+    }
+
+    .top-panel {
+      margin-top: 0 !important;
+    }
+
+    .hero {
+      min-height: 270px !important;
+    }
+
+    .brand {
+      margin-top: 42px !important;
+    }
+
+    @media (max-width: 480px) {
+      .app {
+        min-height: calc(100vh - 20px) !important;
+        padding-top: 18px !important;
+      }
+
+      .top-panel {
+        margin-top: 0 !important;
+      }
+
+      .hero {
+        min-height: 245px !important;
+      }
+
+      .brand {
+        margin-top: 34px !important;
+      }
+    }
+
 </style>
 </head>
 
