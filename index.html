@@ -771,6 +771,65 @@
       }
     }
 
+
+
+    /* === Perapihan card MyCode === */
+    .hero::after {
+      display: none !important;
+      content: none !important;
+    }
+
+    .bottom-panel::before {
+      display: none !important;
+      content: none !important;
+    }
+
+    .progress-line {
+      align-items: center !important;
+    }
+
+    .clock-widget {
+      min-width: 128px !important;
+      padding: 10px 14px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 6px !important;
+      text-align: center !important;
+      line-height: 1 !important;
+      white-space: nowrap !important;
+    }
+
+    .clock-time {
+      font-size: 18px !important;
+      font-weight: 800 !important;
+      margin: 0 !important;
+      line-height: 1 !important;
+      display: inline-block !important;
+      letter-spacing: .4px !important;
+    }
+
+    .clock-zone {
+      font-size: 18px !important;
+      font-weight: 800 !important;
+      margin: 0 !important;
+      line-height: 1 !important;
+      display: inline-block !important;
+      letter-spacing: 0 !important;
+      color: rgba(255,255,255,.88) !important;
+    }
+
+    @media (max-width: 480px) {
+      .clock-widget {
+        min-width: 116px !important;
+        padding: 9px 12px !important;
+        gap: 5px !important;
+      }
+      .clock-time,
+      .clock-zone {
+        font-size: 16px !important;
+      }
+    }
 </style>
 </head>
 
@@ -793,7 +852,7 @@
           </div>
           <div class="brand-text"><h1>MyCode</h1><p>Decoding Your<br>Academic Journey</p></div>
         </div>
-        <div class="progress-line"><div class="progress"><div></div></div><div class="clock-widget" aria-label="Jam WIB"><div class="clock-time" id="clock">00:00</div><div class="clock-zone">WIB</div></div></div>
+        <div class="progress-line"><div class="progress"><div></div></div><div class="clock-widget" aria-label="Jam WIB"><span class="clock-time" id="clock">00:00</span><span class="clock-zone">WIB</span></div></div>
       </div>
     </section>
 
