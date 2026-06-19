@@ -6,7 +6,7 @@ Aplikasi ini dibuat untuk GitHub Pages dengan database Google Spreadsheet dan ba
 
 - `index.html` — halaman utama aplikasi.
 - `style.css` — desain tampilan dan format cetak.
-- `app.js` — logika input, template kegiatan, hitung jam, preview, simpan, dan cetak.
+- `app.js` — logika input, kalender tanggal merah Indonesia 2026, template kegiatan, hitung jam, preview, simpan, dan cetak.
 - `Code.gs` — backend Google Apps Script untuk membaca/menyimpan data ke Spreadsheet.
 - `.nojekyll` — agar GitHub Pages membaca file statis apa adanya.
 - `template-spreadsheet-lembur.xlsx` — template struktur spreadsheet.
@@ -99,13 +99,29 @@ Setelah itu commit ulang ke GitHub.
 3. Pilih atau isi data pegawai.
 4. Isi template kegiatan Senin sampai Sabtu.
 5. Klik `Simpan Template`.
-6. Pilih tanggal lembur.
-7. Kegiatan akan otomatis muncul sesuai hari.
-8. Isi jam aktual dan jam yang dihitung.
-9. Klik `Tambahkan ke Daftar`.
-10. Klik `Tampilkan Preview`.
-11. Klik `Simpan Pengajuan`.
-12. Klik `Cetak / Simpan PDF`.
+6. Pada bagian tanggal, gunakan mode `Pilih dari Kalender`.
+7. Pilih bulan pengajuan.
+8. Klik tanggal-tanggal yang diajukan lembur. Hari Minggu, libur nasional, dan cuti bersama diberi tanda khusus.
+9. Isi jam aktual dan jam yang dihitung.
+10. Klik `Tambahkan ke Daftar`.
+11. Kegiatan otomatis muncul sesuai template hari dan masih bisa diedit.
+12. Klik `Tampilkan Preview`.
+13. Klik `Simpan Pengajuan`.
+14. Klik `Cetak / Simpan PDF`.
+
+
+## Kalender Tanggal Merah
+
+Versi ini sudah memiliki mode `Pilih dari Kalender`. Pengguna cukup memilih bulan, lalu klik beberapa tanggal yang ingin diajukan lembur.
+
+Tanda kalender:
+
+- Tanggal terpilih: warna utama.
+- Hari Minggu: merah muda.
+- Libur nasional 2026: merah muda dengan nama hari libur.
+- Cuti bersama 2026: oranye muda dengan nama cuti bersama.
+
+Tanggal merah dan cuti bersama 2026 dimasukkan di `app.js` pada objek `INDONESIA_HOLIDAYS`. Jika tahun berikutnya sudah ada SKB terbaru, tambahkan daftar tanggal baru pada objek tersebut.
 
 ## Catatan Cetak PDF
 

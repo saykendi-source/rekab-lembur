@@ -12,7 +12,39 @@ const CONFIG = {
 
 const DAYS = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 const TEMPLATE_DAYS = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+const MONTH_NAMES = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+const SHORT_DAYS = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
 const STORAGE_KEY = "lembur-app-v1";
+
+// Daftar tanggal merah Indonesia 2026 berdasarkan SKB 3 Menteri.
+// Minggu otomatis ditandai merah walaupun tidak ada di daftar ini.
+const INDONESIA_HOLIDAYS = {
+  "2026-01-01": { type: "holiday", name: "Tahun Baru 2026" },
+  "2026-01-16": { type: "holiday", name: "Isra Mikraj" },
+  "2026-02-16": { type: "leave", name: "Cuti bersama Imlek" },
+  "2026-02-17": { type: "holiday", name: "Tahun Baru Imlek" },
+  "2026-03-18": { type: "leave", name: "Cuti bersama Nyepi" },
+  "2026-03-19": { type: "holiday", name: "Hari Suci Nyepi" },
+  "2026-03-20": { type: "leave", name: "Cuti bersama Idulfitri" },
+  "2026-03-21": { type: "holiday", name: "Idulfitri 1447 H" },
+  "2026-03-22": { type: "holiday", name: "Idulfitri 1447 H" },
+  "2026-03-23": { type: "leave", name: "Cuti bersama Idulfitri" },
+  "2026-03-24": { type: "leave", name: "Cuti bersama Idulfitri" },
+  "2026-04-03": { type: "holiday", name: "Wafat Yesus Kristus" },
+  "2026-04-05": { type: "holiday", name: "Paskah" },
+  "2026-05-01": { type: "holiday", name: "Hari Buruh" },
+  "2026-05-14": { type: "holiday", name: "Kenaikan Yesus Kristus" },
+  "2026-05-15": { type: "leave", name: "Cuti bersama Kenaikan" },
+  "2026-05-27": { type: "holiday", name: "Iduladha 1447 H" },
+  "2026-05-28": { type: "leave", name: "Cuti bersama Iduladha" },
+  "2026-05-31": { type: "holiday", name: "Hari Raya Waisak" },
+  "2026-06-01": { type: "holiday", name: "Hari Lahir Pancasila" },
+  "2026-06-16": { type: "holiday", name: "Tahun Baru Islam" },
+  "2026-08-17": { type: "holiday", name: "Kemerdekaan RI" },
+  "2026-08-25": { type: "holiday", name: "Maulid Nabi" },
+  "2026-12-24": { type: "leave", name: "Cuti bersama Natal" },
+  "2026-12-25": { type: "holiday", name: "Natal" }
+};
 
 const $ = (id) => document.getElementById(id);
 
@@ -20,6 +52,7 @@ let state = {
   employees: [],
   templates: {},
   rows: [],
+  calendarSelected: [],
   lastSubmissionId: ""
 };
 
@@ -66,6 +99,86 @@ function formatDateID(iso) {
     month: "long",
     year: "numeric"
   });
+}
+
+function isoFromParts(year, monthIndex, day) {
+  return `${year}-${String(monthIndex + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+}
+
+function getHolidayInfo(iso) {
+  return INDONESIA_HOLIDAYS[iso] || null;
+}
+
+function syncMonthInputs(monthValue) {
+  if (!monthValue) return;
+  if ($("bulanPengajuan")) $("bulanPengajuan").value = monthValue;
+}
+
+function toggleCalendarDate(iso) {
+  const selected = new Set(state.calendarSelected || []);
+  selected.has(iso) ? selected.delete(iso) : selected.add(iso);
+  state.calendarSelected = [...selected].sort();
+  saveLocal();
+  renderCalendar();
+}
+
+function renderCalendar() {
+  const grid = $("calendarGrid");
+  if (!grid) return;
+  const monthValue = $("calendarMonth").value || monthISO();
+  syncMonthInputs(monthValue);
+  const [year, month] = monthValue.split("-").map(Number);
+  const monthIndex = month - 1;
+  const first = new Date(year, monthIndex, 1);
+  const lastDate = new Date(year, monthIndex + 1, 0).getDate();
+  const firstDay = first.getDay();
+  const selected = new Set(state.calendarSelected || []);
+
+  grid.innerHTML = "";
+  SHORT_DAYS.forEach((day) => {
+    const head = document.createElement("div");
+    head.className = "calendar-head";
+    head.textContent = day;
+    grid.appendChild(head);
+  });
+
+  for (let i = 0; i < firstDay; i += 1) {
+    const blank = document.createElement("div");
+    blank.className = "calendar-day blank";
+    grid.appendChild(blank);
+  }
+
+  const today = todayISO();
+  for (let day = 1; day <= lastDate; day += 1) {
+    const iso = isoFromParts(year, monthIndex, day);
+    const dayName = getDayName(iso);
+    const info = getHolidayInfo(iso);
+    const isSunday = dayName === "Minggu";
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = [
+      "calendar-day",
+      isSunday ? "sunday" : "",
+      info?.type === "holiday" ? "holiday" : "",
+      info?.type === "leave" ? "leave" : "",
+      selected.has(iso) ? "selected" : "",
+      iso === today ? "today" : ""
+    ].filter(Boolean).join(" ");
+    btn.title = info ? `${formatDateID(iso)} - ${info.name}` : formatDateID(iso);
+    btn.innerHTML = `
+      <span class="date-num">${day}</span>
+      <span class="date-name">${dayName}</span>
+      ${info ? `<span class="holiday-name">${escapeHTML(info.name)}</span>` : ""}
+    `;
+    btn.addEventListener("click", () => toggleCalendarDate(iso));
+    grid.appendChild(btn);
+  }
+
+  const selectedInMonth = [...selected].filter((iso) => iso.startsWith(monthValue)).sort();
+  const infoText = selectedInMonth.length
+    ? `${selectedInMonth.length} tanggal dipilih: ${selectedInMonth.map((iso) => formatDateID(iso)).join(", ")}`
+    : "Belum ada tanggal dipilih pada bulan ini.";
+  $("calendarSelectedInfo").textContent = infoText;
 }
 
 function toMinutes(time) {
@@ -168,6 +281,22 @@ function createRow({ date, kegiatan, aktualMulai, aktualSelesai, hitungMulai, hi
     hitungSelesai: hitungSelesai || CONFIG.DEFAULT_COUNTED_END,
     totalJam: 0
   });
+}
+
+function addCalendarRows() {
+  readTemplatesFromUI();
+  const monthValue = $("calendarMonth").value || monthISO();
+  const selectedDates = (state.calendarSelected || []).filter((iso) => iso.startsWith(monthValue)).sort();
+  if (!selectedDates.length) return setStatus("Pilih minimal satu tanggal pada kalender.", "error");
+  const rows = selectedDates.map((date) => createRow({
+    date,
+    kegiatan: state.templates[getDayName(date)] || "",
+    aktualMulai: $("calendarAktualMulai").value,
+    aktualSelesai: $("calendarAktualSelesai").value,
+    hitungMulai: $("calendarHitungMulai").value,
+    hitungSelesai: $("calendarHitungSelesai").value
+  }));
+  upsertRows(rows);
 }
 
 function addSingleRow() {
@@ -490,10 +619,13 @@ function printDocument() {
 
 function bindEvents() {
   $("bulanPengajuan").value = monthISO();
+  $("calendarMonth").value = monthISO();
   $("tanggalSingle").value = todayISO();
   $("tanggalMulai").value = todayISO();
   $("tanggalSampai").value = todayISO();
   $("lokasiTanggal").value = `Yogyakarta, ${formatDateID(todayISO())}`;
+  $("calendarHitungMulai").value = CONFIG.DEFAULT_COUNTED_START;
+  $("calendarHitungSelesai").value = CONFIG.DEFAULT_COUNTED_END;
   $("hitungMulai").value = CONFIG.DEFAULT_COUNTED_START;
   $("hitungSelesai").value = CONFIG.DEFAULT_COUNTED_END;
   $("rangeHitungMulai").value = CONFIG.DEFAULT_COUNTED_START;
@@ -502,16 +634,30 @@ function bindEvents() {
   document.querySelectorAll("input[name='modeTanggal']").forEach((el) => {
     el.addEventListener("change", () => {
       const mode = document.querySelector("input[name='modeTanggal']:checked").value;
+      $("calendarDateBox").classList.toggle("hidden", mode !== "calendar");
       $("singleDateBox").classList.toggle("hidden", mode !== "single");
       $("rangeDateBox").classList.toggle("hidden", mode !== "range");
+      if (mode === "calendar") renderCalendar();
     });
   });
 
   $("employeeSearch").addEventListener("change", () => fillEmployee(selectedEmployeeValue()));
   $("tanggalSingle").addEventListener("change", syncActivityForSingleDate);
+  $("calendarMonth").addEventListener("change", () => {
+    syncMonthInputs($("calendarMonth").value);
+    renderCalendar();
+  });
+  $("bulanPengajuan").addEventListener("change", () => {
+    if ($("bulanPengajuan").value) {
+      $("calendarMonth").value = $("bulanPengajuan").value;
+      renderCalendar();
+    }
+  });
   $("btnAddRows").addEventListener("click", () => {
     const mode = document.querySelector("input[name='modeTanggal']:checked").value;
-    mode === "single" ? addSingleRow() : addRangeRows();
+    if (mode === "calendar") addCalendarRows();
+    else if (mode === "single") addSingleRow();
+    else addRangeRows();
   });
   $("btnResetRows").addEventListener("click", () => {
     if (confirm("Kosongkan semua daftar lembur?")) {
@@ -558,11 +704,13 @@ function initDemoDataIfEmpty() {
 
 function init() {
   loadLocal();
+  if (!Array.isArray(state.calendarSelected)) state.calendarSelected = [];
   initDemoDataIfEmpty();
   bindEvents();
   renderEmployees();
   renderTemplates();
   renderRows();
+  renderCalendar();
   syncActivityForSingleDate();
   setStatus(isConnected() ? "Aplikasi siap digunakan." : "Mode uji lokal aktif. Isi SCRIPT_URL di app.js untuk terhubung ke Spreadsheet.");
 }

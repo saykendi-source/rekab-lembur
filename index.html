@@ -79,16 +79,55 @@
         <span class="step">3</span>
         <div>
           <h2>Input Tanggal dan Jam Lembur</h2>
-          <p>Pilih satu tanggal atau buat daftar dari rentang tanggal.</p>
+          <p>Pilih tanggal lembur langsung dari kalender bulanan. Tanggal merah Indonesia dan hari Minggu diberi tanda khusus.</p>
         </div>
       </div>
 
       <div class="mode-toggle">
-        <label><input type="radio" name="modeTanggal" value="single" checked /> Satu tanggal</label>
+        <label><input type="radio" name="modeTanggal" value="calendar" checked /> Pilih dari Kalender</label>
+        <label><input type="radio" name="modeTanggal" value="single" /> Satu tanggal</label>
         <label><input type="radio" name="modeTanggal" value="range" /> Periode tanggal</label>
       </div>
 
-      <div id="singleDateBox" class="grid four">
+      <div id="calendarDateBox">
+        <div class="grid four">
+          <label>
+            Bulan Kalender
+            <input id="calendarMonth" type="month" />
+          </label>
+          <label>
+            Jam Aktual Mulai
+            <input id="calendarAktualMulai" type="time" value="16:00" />
+          </label>
+          <label>
+            Jam Aktual Selesai
+            <input id="calendarAktualSelesai" type="time" value="20:00" />
+          </label>
+          <label>
+            Mulai Dihitung
+            <input id="calendarHitungMulai" type="time" value="17:00" />
+          </label>
+          <label>
+            Selesai Dihitung
+            <input id="calendarHitungSelesai" type="time" value="20:00" />
+          </label>
+        </div>
+        <div class="calendar-help">
+          <div>
+            <strong>Pilih tanggal:</strong> klik tanggal yang akan diajukan lembur. Tanggal merah tetap bisa dipilih apabila memang ada lembur.
+          </div>
+          <div class="calendar-legend">
+            <span><i class="legend-dot selected-dot"></i> Dipilih</span>
+            <span><i class="legend-dot holiday-dot"></i> Libur nasional</span>
+            <span><i class="legend-dot leave-dot"></i> Cuti bersama</span>
+            <span><i class="legend-dot sunday-dot"></i> Minggu</span>
+          </div>
+        </div>
+        <div id="calendarGrid" class="calendar-grid" aria-label="Kalender pilihan tanggal lembur"></div>
+        <p id="calendarSelectedInfo" class="calendar-selected-info">Belum ada tanggal dipilih.</p>
+      </div>
+
+      <div id="singleDateBox" class="grid four hidden">
         <label>
           Tanggal Lembur
           <input id="tanggalSingle" type="date" />
