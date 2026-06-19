@@ -4,7 +4,7 @@
   2) Isi SCRIPT_URL setelah Web App Apps Script berhasil dibuat.
 */
 const CONFIG = {
-  SCRIPT_URL: "PASTE_WEB_APP_URL_HERE",
+  SCRIPT_URL: "https://script.google.com/macros/s/AKfycbzXWjWKZ6xr_gQh_8PQg2Xuh8IfSotWnVqxuCtr0muyx2z99QDTWNWB5vSYNXs6tly8mw/exec",
   APP_NAME: "Laporan Pengajuan Lembur",
   DEFAULT_COUNTED_START: "17:00",
   DEFAULT_COUNTED_END: "20:00"
