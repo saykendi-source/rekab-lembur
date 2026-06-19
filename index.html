@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Laporan Pengajuan Lembur</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="app-header no-print">
+    <div>
+      <p class="eyebrow">Aplikasi Internal</p>
+      <h1>Laporan Pengajuan Lembur</h1>
+      <p class="subtitle">Input kegiatan, hitung jam lembur, simpan pengajuan, lalu cetak atau simpan PDF.</p>
+    </div>
+    <div class="header-actions">
+      <button id="btnLoadData" class="btn secondary">Muat Data</button>
+      <button id="btnPrintTop" class="btn primary">Cetak / PDF</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="card no-print">
+      <div class="section-title">
+        <span class="step">1</span>
+        <div>
+          <h2>Data Pegawai</h2>
+          <p>Pilih dari master pegawai atau isi manual.</p>
+        </div>
+      </div>
+
+      <div class="grid three">
+        <label>
+          Cari Pegawai
+          <input id="employeeSearch" list="employeeList" placeholder="Ketik nama / NIK" autocomplete="off" />
+          <datalist id="employeeList"></datalist>
+        </label>
+        <label>
+          Nama
+          <input id="nama" placeholder="Nama pegawai" />
+        </label>
+        <label>
+          NIK
+          <input id="nik" placeholder="NIK" />
+        </label>
+        <label class="wide">
+          Unit Kerja
+          <input id="unitKerja" placeholder="Unit kerja" />
+        </label>
+        <label>
+          Jabatan <span class="muted">opsional</span>
+          <input id="jabatan" placeholder="Jabatan" />
+        </label>
+        <label>
+          Bulan Pengajuan
+          <input id="bulanPengajuan" type="month" />
+        </label>
+      </div>
+    </section>
+
+    <section class="card no-print">
+      <div class="section-title">
+        <span class="step">2</span>
+        <div>
+          <h2>Template Kegiatan Senin–Sabtu</h2>
+          <p>Kegiatan default akan otomatis muncul saat tanggal lembur dipilih.</p>
+        </div>
+      </div>
+
+      <div class="template-grid" id="templateGrid"></div>
+      <div class="toolbar">
+        <button id="btnSaveTemplate" class="btn secondary">Simpan Template</button>
+        <button id="btnClearTemplate" class="btn ghost">Kosongkan Template</button>
+      </div>
+    </section>
+
+    <section class="card no-print">
+      <div class="section-title">
+        <span class="step">3</span>
+        <div>
+          <h2>Input Tanggal dan Jam Lembur</h2>
+          <p>Pilih satu tanggal atau buat daftar dari rentang tanggal.</p>
+        </div>
+      </div>
+
+      <div class="mode-toggle">
+        <label><input type="radio" name="modeTanggal" value="single" checked /> Satu tanggal</label>
+        <label><input type="radio" name="modeTanggal" value="range" /> Periode tanggal</label>
+      </div>
+
+      <div id="singleDateBox" class="grid four">
+        <label>
+          Tanggal Lembur
+          <input id="tanggalSingle" type="date" />
+        </label>
+        <label>
+          Jam Aktual Mulai
+          <input id="aktualMulai" type="time" value="16:00" />
+        </label>
+        <label>
+          Jam Aktual Selesai
+          <input id="aktualSelesai" type="time" value="20:00" />
+        </label>
+        <label>
+          Mulai Dihitung
+          <input id="hitungMulai" type="time" value="17:00" />
+        </label>
+        <label>
+          Selesai Dihitung
+          <input id="hitungSelesai" type="time" value="20:00" />
+        </label>
+        <label class="wide">
+          Kegiatan <span class="muted">otomatis, bisa diedit</span>
+          <textarea id="kegiatanSingle" rows="2" placeholder="Kegiatan lembur"></textarea>
+        </label>
+      </div>
+
+      <div id="rangeDateBox" class="hidden">
+        <div class="grid four">
+          <label>
+            Dari Tanggal
+            <input id="tanggalMulai" type="date" />
+          </label>
+          <label>
+            Sampai Tanggal
+            <input id="tanggalSampai" type="date" />
+          </label>
+          <label>
+            Jam Aktual Mulai
+            <input id="rangeAktualMulai" type="time" value="16:00" />
+          </label>
+          <label>
+            Jam Aktual Selesai
+            <input id="rangeAktualSelesai" type="time" value="20:00" />
+          </label>
+          <label>
+            Mulai Dihitung
+            <input id="rangeHitungMulai" type="time" value="17:00" />
+          </label>
+          <label>
+            Selesai Dihitung
+            <input id="rangeHitungSelesai" type="time" value="20:00" />
+          </label>
+        </div>
+        <div class="weekday-box">
+          <strong>Hari yang dimasukkan:</strong>
+          <label><input type="checkbox" class="weekdayPick" value="1" checked /> Senin</label>
+          <label><input type="checkbox" class="weekdayPick" value="2" checked /> Selasa</label>
+          <label><input type="checkbox" class="weekdayPick" value="3" checked /> Rabu</label>
+          <label><input type="checkbox" class="weekdayPick" value="4" checked /> Kamis</label>
+          <label><input type="checkbox" class="weekdayPick" value="5" checked /> Jumat</label>
+          <label><input type="checkbox" class="weekdayPick" value="6" checked /> Sabtu</label>
+          <label><input type="checkbox" class="weekdayPick" value="0" /> Minggu</label>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <button id="btnAddRows" class="btn primary">Tambahkan ke Daftar</button>
+        <button id="btnResetRows" class="btn ghost danger">Kosongkan Daftar</button>
+      </div>
+    </section>
+
+    <section class="card no-print">
+      <div class="section-title">
+        <span class="step">4</span>
+        <div>
+          <h2>Daftar Lembur</h2>
+          <p>Semua baris masih bisa diedit sebelum disimpan atau dicetak.</p>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data-table" id="overtimeTable">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Tanggal</th>
+              <th>Hari</th>
+              <th>Kegiatan</th>
+              <th>Aktual</th>
+              <th>Dihitung</th>
+              <th>Total Jam</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="overtimeBody"></tbody>
+          <tfoot>
+            <tr>
+              <td colspan="6">Total</td>
+              <td id="totalJamCell">0 jam</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div class="grid two approval-grid">
+        <label>
+          Nama Atasan / Pejabat Mengetahui
+          <input id="atasanNama" placeholder="Nama pejabat" />
+        </label>
+        <label>
+          Jabatan Atasan
+          <input id="atasanJabatan" placeholder="Jabatan pejabat" />
+        </label>
+        <label>
+          Catatan
+          <textarea id="catatan" rows="2" placeholder="Catatan tambahan, jika ada"></textarea>
+        </label>
+        <label>
+          Lokasi dan Tanggal Tanda Tangan
+          <input id="lokasiTanggal" placeholder="Yogyakarta, 30 Juni 2026" />
+        </label>
+      </div>
+
+      <div class="toolbar">
+        <button id="btnPreview" class="btn secondary">Tampilkan Preview</button>
+        <button id="btnSaveSubmission" class="btn primary">Simpan Pengajuan</button>
+        <button id="btnPrint" class="btn primary">Cetak / Simpan PDF</button>
+      </div>
+      <p id="statusMessage" class="status-message"></p>
+    </section>
+
+    <section class="preview-card" id="previewCard">
+      <div class="print-toolbar no-print">
+        <button id="btnEdit" class="btn secondary">Edit Kembali</button>
+        <button id="btnPrintPreview" class="btn primary">Cetak / Simpan PDF</button>
+      </div>
+      <div id="printArea" class="print-area"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
