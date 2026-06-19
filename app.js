@@ -114,6 +114,48 @@ function syncMonthInputs(monthValue) {
   if ($("bulanPengajuan")) $("bulanPengajuan").value = monthValue;
 }
 
+function buildCalendarSelectors() {
+  const monthSelect = $("calendarMonthSelect");
+  const yearSelect = $("calendarYearSelect");
+  if (!monthSelect || !yearSelect) return;
+
+  monthSelect.innerHTML = MONTH_NAMES.map((name, index) =>
+    `<option value="${String(index + 1).padStart(2, "0")}">${name}</option>`
+  ).join("");
+
+  const currentYear = new Date().getFullYear();
+  const years = [];
+  for (let y = currentYear - 1; y <= currentYear + 4; y += 1) years.push(y);
+  if (!years.includes(2026)) years.push(2026);
+  yearSelect.innerHTML = [...new Set(years)].sort().map((year) =>
+    `<option value="${year}">${year}</option>`
+  ).join("");
+}
+
+function syncCalendarSelectors(monthValue) {
+  if (!monthValue || !monthValue.includes("-")) return;
+  const [year, month] = monthValue.split("-");
+  const monthSelect = $("calendarMonthSelect");
+  const yearSelect = $("calendarYearSelect");
+  if (monthSelect) monthSelect.value = month;
+  if (yearSelect) {
+    if (![...yearSelect.options].some((opt) => opt.value === year)) {
+      yearSelect.insertAdjacentHTML("beforeend", `<option value="${year}">${year}</option>`);
+    }
+    yearSelect.value = year;
+  }
+}
+
+function updateCalendarMonthFromSelectors() {
+  const monthSelect = $("calendarMonthSelect");
+  const yearSelect = $("calendarYearSelect");
+  if (!monthSelect || !yearSelect) return monthISO();
+  const value = `${yearSelect.value}-${monthSelect.value}`;
+  $("calendarMonth").value = value;
+  syncMonthInputs(value);
+  return value;
+}
+
 function toggleCalendarDate(iso) {
   const selected = new Set(state.calendarSelected || []);
   selected.has(iso) ? selected.delete(iso) : selected.add(iso);
@@ -125,8 +167,9 @@ function toggleCalendarDate(iso) {
 function renderCalendar() {
   const grid = $("calendarGrid");
   if (!grid) return;
-  const monthValue = $("calendarMonth").value || monthISO();
+  const monthValue = $("calendarMonth").value || updateCalendarMonthFromSelectors() || monthISO();
   syncMonthInputs(monthValue);
+  syncCalendarSelectors(monthValue);
   const [year, month] = monthValue.split("-").map(Number);
   const monthIndex = month - 1;
   const first = new Date(year, monthIndex, 1);
@@ -618,8 +661,10 @@ function printDocument() {
 }
 
 function bindEvents() {
+  buildCalendarSelectors();
   $("bulanPengajuan").value = monthISO();
   $("calendarMonth").value = monthISO();
+  syncCalendarSelectors(monthISO());
   $("tanggalSingle").value = todayISO();
   $("tanggalMulai").value = todayISO();
   $("tanggalSampai").value = todayISO();
@@ -643,13 +688,16 @@ function bindEvents() {
 
   $("employeeSearch").addEventListener("change", () => fillEmployee(selectedEmployeeValue()));
   $("tanggalSingle").addEventListener("change", syncActivityForSingleDate);
-  $("calendarMonth").addEventListener("change", () => {
-    syncMonthInputs($("calendarMonth").value);
-    renderCalendar();
+  ["calendarMonthSelect", "calendarYearSelect"].forEach((id) => {
+    $(id).addEventListener("change", () => {
+      updateCalendarMonthFromSelectors();
+      renderCalendar();
+    });
   });
   $("bulanPengajuan").addEventListener("change", () => {
     if ($("bulanPengajuan").value) {
       $("calendarMonth").value = $("bulanPengajuan").value;
+      syncCalendarSelectors($("bulanPengajuan").value);
       renderCalendar();
     }
   });
