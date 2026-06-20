@@ -139,3 +139,15 @@ Cara ini lebih ringan daripada membuat PDF memakai library tambahan.
 - Data lokal hanya tersimpan di browser yang sama.
 - Setelah terhubung ke Apps Script, data akan tersimpan di Google Spreadsheet.
 - Jika ada perubahan kode Apps Script, lakukan deploy ulang dan gunakan URL deployment terbaru bila diperlukan.
+
+## Update UI terbaru
+
+Versi ini menambahkan:
+
+1. Tombol **Info Pemakaian** di bagian atas aplikasi.
+2. Urutan penggunaan aplikasi dalam bentuk pop-up bantuan.
+3. Tampilan dominan warna pastel.
+4. Empat kotak utama dibuat bisa **Minimize/Buka** agar halaman tidak langsung terlalu panjang.
+5. Setelah tanggal lembur ditambahkan, kotak **Daftar Lembur** otomatis terbuka.
+
+Saat pertama dibuka, hanya kotak **Data Pegawai** yang terbuka. Kotak lain dapat dibuka melalui tombol **Buka** di kanan judul masing-masing langkah.

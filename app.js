@@ -620,11 +620,13 @@ async function saveTemplateToSheet() {
   saveLocal();
   if (!isConnected()) {
     setStatus("Template tersimpan lokal. Isi SCRIPT_URL untuk menyimpan ke Spreadsheet.");
+    openCard("cardStep3");
     return;
   }
   try {
     await apiPost({ action: "saveTemplate", nik, templates: state.templates });
     setStatus("Template berhasil disimpan ke Spreadsheet.");
+    openCard("cardStep3");
   } catch (err) {
     console.error(err);
     setStatus("Gagal menyimpan template ke Spreadsheet.", "error");
@@ -660,7 +662,76 @@ function printDocument() {
   window.print();
 }
 
+
+function syncCollapseButton(card) {
+  if (!card) return;
+  const btn = card.querySelector(".collapse-btn");
+  if (!btn) return;
+  const collapsed = card.classList.contains("collapsed");
+  btn.textContent = collapsed ? "Buka" : "Minimalkan";
+  btn.setAttribute("aria-expanded", collapsed ? "false" : "true");
+}
+
+function setCardCollapsed(cardOrId, collapsed) {
+  const card = typeof cardOrId === "string" ? $(cardOrId) : cardOrId;
+  if (!card) return;
+  card.classList.toggle("collapsed", collapsed);
+  syncCollapseButton(card);
+}
+
+function openCard(cardId) {
+  setCardCollapsed(cardId, false);
+}
+
+function setupCollapsibleCards() {
+  document.querySelectorAll(".card.collapsible").forEach((card) => {
+    syncCollapseButton(card);
+    const title = card.querySelector(".section-title");
+    const btn = card.querySelector(".collapse-btn");
+    const toggle = () => setCardCollapsed(card, !card.classList.contains("collapsed"));
+    if (btn) btn.addEventListener("click", (event) => {
+      event.stopPropagation();
+      toggle();
+    });
+    if (title) {
+      title.setAttribute("tabindex", "0");
+      title.addEventListener("click", (event) => {
+        if (event.target.closest("button,input,select,textarea,a")) return;
+        toggle();
+      });
+      title.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          toggle();
+        }
+      });
+    }
+  });
+}
+
+function setUsageModal(open) {
+  const modal = $("usageModal");
+  if (!modal) return;
+  modal.classList.toggle("hidden", !open);
+  modal.setAttribute("aria-hidden", open ? "false" : "true");
+}
+
+function setupUsageModal() {
+  const helpBtn = $("btnHelp");
+  const closeBtn = $("btnCloseHelp");
+  if (helpBtn) helpBtn.addEventListener("click", () => setUsageModal(true));
+  if (closeBtn) closeBtn.addEventListener("click", () => setUsageModal(false));
+  document.querySelectorAll("[data-close-help]").forEach((el) => {
+    el.addEventListener("click", () => setUsageModal(false));
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") setUsageModal(false);
+  });
+}
+
 function bindEvents() {
+  setupCollapsibleCards();
+  setupUsageModal();
   buildCalendarSelectors();
   $("bulanPengajuan").value = monthISO();
   $("calendarMonth").value = monthISO();
@@ -686,7 +757,10 @@ function bindEvents() {
     });
   });
 
-  $("employeeSearch").addEventListener("change", () => fillEmployee(selectedEmployeeValue()));
+  $("employeeSearch").addEventListener("change", () => {
+    fillEmployee(selectedEmployeeValue());
+    openCard("cardStep2");
+  });
   $("tanggalSingle").addEventListener("change", syncActivityForSingleDate);
   ["calendarMonthSelect", "calendarYearSelect"].forEach((id) => {
     $(id).addEventListener("change", () => {
@@ -702,10 +776,15 @@ function bindEvents() {
     }
   });
   $("btnAddRows").addEventListener("click", () => {
+    const beforeCount = state.rows.length;
     const mode = document.querySelector("input[name='modeTanggal']:checked").value;
     if (mode === "calendar") addCalendarRows();
     else if (mode === "single") addSingleRow();
     else addRangeRows();
+    if (state.rows.length > beforeCount) {
+      openCard("cardStep4");
+      $("cardStep4")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   });
   $("btnResetRows").addEventListener("click", () => {
     if (confirm("Kosongkan semua daftar lembur?")) {

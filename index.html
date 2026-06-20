@@ -14,19 +14,44 @@
       <p class="subtitle">Input kegiatan, hitung jam lembur, simpan pengajuan, lalu cetak atau simpan PDF.</p>
     </div>
     <div class="header-actions">
-      <button id="btnLoadData" class="btn secondary">Muat Data</button>
-      <button id="btnPrintTop" class="btn primary">Cetak / PDF</button>
+      <button id="btnHelp" class="btn info" type="button">Info Pemakaian</button>
+      <button id="btnLoadData" class="btn secondary" type="button">Muat Data</button>
+      <button id="btnPrintTop" class="btn primary" type="button">Cetak / PDF</button>
     </div>
   </header>
 
+
+  <div id="usageModal" class="help-modal no-print hidden" aria-hidden="true">
+    <div class="help-backdrop" data-close-help></div>
+    <div class="help-panel" role="dialog" aria-modal="true" aria-labelledby="usageTitle">
+      <button id="btnCloseHelp" class="help-close" type="button" aria-label="Tutup informasi">×</button>
+      <p class="eyebrow">Petunjuk Singkat</p>
+      <h2 id="usageTitle">Urutan Pemakaian Aplikasi</h2>
+      <ol class="usage-list">
+        <li><strong>Muat Data</strong> untuk mengambil master pegawai dan template dari Spreadsheet.</li>
+        <li><strong>Pilih pegawai</strong> atau isi Nama, NIK, Unit Kerja, dan Jabatan secara manual.</li>
+        <li><strong>Isi Template Kegiatan</strong> Senin–Sabtu, lalu simpan agar kegiatan otomatis muncul saat tanggal dipilih.</li>
+        <li><strong>Pilih tanggal lembur</strong> dari kalender bulanan, satu tanggal, atau periode tanggal.</li>
+        <li><strong>Atur jam lembur</strong>, lalu klik Tambahkan ke Daftar.</li>
+        <li><strong>Cek Daftar Lembur</strong>, edit kegiatan/jam bila diperlukan, lalu isi data atasan.</li>
+        <li><strong>Tampilkan Preview</strong> untuk melihat bentuk laporan sebelum dicetak.</li>
+        <li><strong>Simpan Pengajuan</strong> ke Spreadsheet, lalu Cetak / Simpan PDF.</li>
+      </ol>
+      <div class="help-tip">
+        Tips: kotak langkah bisa dibuka/tutup memakai tombol di kanan judul agar halaman tetap ringkas.
+      </div>
+    </div>
+  </div>
+
   <main class="layout">
-    <section class="card no-print">
+    <section id="cardStep1" class="card no-print collapsible">
       <div class="section-title">
         <span class="step">1</span>
         <div>
           <h2>Data Pegawai</h2>
           <p>Pilih dari master pegawai atau isi manual.</p>
         </div>
+        <button class="collapse-btn" type="button" aria-expanded="true" aria-controls="cardStep1">Minimalkan</button>
       </div>
 
       <div class="grid three">
@@ -58,13 +83,14 @@
       </div>
     </section>
 
-    <section class="card no-print">
+    <section id="cardStep2" class="card no-print collapsible collapsed">
       <div class="section-title">
         <span class="step">2</span>
         <div>
           <h2>Template Kegiatan Senin–Sabtu</h2>
           <p>Kegiatan default akan otomatis muncul saat tanggal lembur dipilih.</p>
         </div>
+        <button class="collapse-btn" type="button" aria-expanded="false" aria-controls="cardStep2">Buka</button>
       </div>
 
       <div class="template-grid" id="templateGrid"></div>
@@ -74,13 +100,14 @@
       </div>
     </section>
 
-    <section class="card no-print">
+    <section id="cardStep3" class="card no-print collapsible collapsed">
       <div class="section-title">
         <span class="step">3</span>
         <div>
           <h2>Input Tanggal dan Jam Lembur</h2>
           <p>Pilih tanggal lembur langsung dari kalender bulanan. Tanggal merah Indonesia dan hari Minggu diberi tanda khusus.</p>
         </div>
+        <button class="collapse-btn" type="button" aria-expanded="false" aria-controls="cardStep3">Buka</button>
       </div>
 
       <div class="mode-toggle">
@@ -204,13 +231,14 @@
       </div>
     </section>
 
-    <section class="card no-print">
+    <section id="cardStep4" class="card no-print collapsible collapsed">
       <div class="section-title">
         <span class="step">4</span>
         <div>
           <h2>Daftar Lembur</h2>
           <p>Semua baris masih bisa diedit sebelum disimpan atau dicetak.</p>
         </div>
+        <button class="collapse-btn" type="button" aria-expanded="false" aria-controls="cardStep4">Buka</button>
       </div>
 
       <div class="table-wrap">
