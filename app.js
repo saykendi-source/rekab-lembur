@@ -561,14 +561,14 @@ function buildPreview() {
     <p class="print-summary">Total: ${data.totalHari} hari / ${hoursText(data.totalJam)}</p>
     ${data.catatan ? `<div class="note-box"><strong>Catatan:</strong><br>${escapeHTML(data.catatan)}</div>` : ""}
 
-    <p class="signature-date">${escapeHTML(data.lokasiTanggal || "Yogyakarta, ....................")}</p>
-    <div class="signature-row">
-      <div class="signature-block">
+    <div class="signature-section">
+      <p class="signature-date">${escapeHTML(data.lokasiTanggal || "Yogyakarta, ....................")}</p>
+      <div class="signature-block pemohon">
         <p class="signature-label">Pemohon,</p>
         <div class="signature-space"></div>
         <p class="signature-name"><strong>${escapeHTML(data.nama)}</strong><br>NIK. ${escapeHTML(data.nik)}</p>
       </div>
-      <div class="signature-block">
+      <div class="signature-block mengetahui">
         <p class="signature-label">Mengetahui,</p>
         <div class="signature-space"></div>
         <p class="signature-name"><strong>${escapeHTML(data.atasanNama || "........................")}</strong><br>${escapeHTML(data.atasanJabatan || "........................")}</p>
