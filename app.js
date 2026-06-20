@@ -101,6 +101,16 @@ function formatDateID(iso) {
   });
 }
 
+function formatMonthID(value) {
+  if (!value) return "";
+  const match = String(value).match(/^(\d{4})-(\d{2})$/);
+  if (!match) return value;
+  const year = match[1];
+  const monthIndex = Number(match[2]) - 1;
+  const monthName = MONTH_NAMES[monthIndex] || match[2];
+  return `${monthName}-${year}`;
+}
+
 function isoFromParts(year, monthIndex, day) {
   return `${year}-${String(monthIndex + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 }
@@ -524,14 +534,13 @@ function buildPreview() {
 
   $("printArea").innerHTML = `
     <h2 class="doc-title">Laporan Pengajuan Lembur</h2>
-    <p class="doc-subtitle">Nomor Pengajuan: <strong>${data.id}</strong></p>
 
     <div class="identity-grid">
       <div>Nama</div><div>:</div><div>${escapeHTML(data.nama)}</div>
       <div>NIK</div><div>:</div><div>${escapeHTML(data.nik)}</div>
       <div>Unit Kerja</div><div>:</div><div>${escapeHTML(data.unitKerja)}</div>
       <div>Jabatan</div><div>:</div><div>${escapeHTML(data.jabatan || "-")}</div>
-      <div>Bulan Pengajuan</div><div>:</div><div>${escapeHTML(data.bulanPengajuan)}</div>
+      <div>Bulan Pengajuan</div><div>:</div><div>${escapeHTML(formatMonthID(data.bulanPengajuan))}</div>
     </div>
 
     <table class="print-table">
@@ -552,17 +561,17 @@ function buildPreview() {
     <p class="print-summary">Total: ${data.totalHari} hari / ${hoursText(data.totalJam)}</p>
     ${data.catatan ? `<div class="note-box"><strong>Catatan:</strong><br>${escapeHTML(data.catatan)}</div>` : ""}
 
+    <p class="signature-date">${escapeHTML(data.lokasiTanggal || "Yogyakarta, ....................")}</p>
     <div class="signature-row">
-      <div>
-        <p>Pemohon,</p>
+      <div class="signature-block">
+        <p class="signature-label">Pemohon,</p>
         <div class="signature-space"></div>
-        <p><strong>${escapeHTML(data.nama)}</strong><br>NIK. ${escapeHTML(data.nik)}</p>
+        <p class="signature-name"><strong>${escapeHTML(data.nama)}</strong><br>NIK. ${escapeHTML(data.nik)}</p>
       </div>
-      <div>
-        <p>${escapeHTML(data.lokasiTanggal || "Yogyakarta, ....................")}</p>
-        <p>Mengetahui,</p>
+      <div class="signature-block">
+        <p class="signature-label">Mengetahui,</p>
         <div class="signature-space"></div>
-        <p><strong>${escapeHTML(data.atasanNama || "........................")}</strong><br>${escapeHTML(data.atasanJabatan || "........................")}</p>
+        <p class="signature-name"><strong>${escapeHTML(data.atasanNama || "........................")}</strong><br>${escapeHTML(data.atasanJabatan || "........................")}</p>
       </div>
     </div>
   `;

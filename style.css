@@ -117,14 +117,17 @@ input:focus,textarea:focus,select:focus{border-color:#38bdf8;box-shadow:0 0 0 3p
   border-radius:18px;
   border:1px solid var(--line);
 }
-.doc-title{text-align:center;margin:0 0 4px;font-size:20px;letter-spacing:.03em;text-transform:uppercase}
+.doc-title{text-align:center;margin:0 0 22px;font-size:20px;letter-spacing:.03em;text-transform:uppercase}
 .doc-subtitle{text-align:center;margin:0 0 24px;color:#374151;font-size:13px}
 .identity-grid{display:grid;grid-template-columns:155px 12px 1fr;gap:5px 8px;margin:0 0 18px;font-size:13px}
 .print-table{width:100%;border-collapse:collapse;margin-top:14px;font-size:12px}
 .print-table th,.print-table td{border:1px solid #111827;padding:7px;vertical-align:top}
 .print-table th{text-align:center;background:#f3f4f6}
 .print-summary{margin:14px 0;font-weight:800;text-align:right}
-.signature-row{display:grid;grid-template-columns:1fr 1fr;gap:42px;margin-top:32px;text-align:center;font-size:13px}
+.signature-date{text-align:right;margin:30px 0 10px;font-size:13px}
+.signature-row{display:grid;grid-template-columns:1fr 1fr;gap:42px;margin-top:0;text-align:center;font-size:13px;align-items:start}
+.signature-block{display:grid;grid-template-rows:auto 70px auto;min-height:128px}
+.signature-label,.signature-name{margin:0}
 .signature-space{height:70px}
 .note-box{border:1px solid #cbd5e1;border-radius:12px;padding:10px 12px;margin-top:14px;font-size:12px;background:#f8fafc}
 @media(max-width:900px){
