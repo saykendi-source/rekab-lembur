@@ -261,7 +261,38 @@ function calculateRow(row) {
 function setStatus(message, type = "info") {
   const el = $("statusMessage");
   el.textContent = message;
-  el.style.color = type === "error" ? "#b91c1c" : "#075985";
+  el.dataset.type = type;
+}
+
+// Data diri disimpan di browser karena aplikasi dipakai satu orang.
+const PROFILE_FIELDS = ["nama", "nik", "unitKerja", "jabatan", "atasanNama", "atasanJabatan"];
+
+function saveProfile() {
+  state.profile = {};
+  PROFILE_FIELDS.forEach((id) => { state.profile[id] = $(id).value.trim(); });
+  saveLocal();
+}
+
+function restoreProfile() {
+  const p = state.profile || {};
+  PROFILE_FIELDS.forEach((id) => { if (p[id]) $(id).value = p[id]; });
+  return Boolean(p.nama && p.nik && p.unitKerja);
+}
+
+function renderSummary() {
+  if (!$("sumJam")) return;
+  const total = state.rows.reduce((sum, r) => sum + Number(r.totalJam || 0), 0);
+  const rounded = Math.round(total * 100) / 100;
+  $("sumJam").textContent = rounded.toLocaleString("id-ID");
+  $("sumHari").textContent = state.rows.length;
+  $("sumNama").textContent = $("nama").value.trim() || "Nama belum diisi";
+  $("sumBulan").textContent = formatMonthID($("bulanPengajuan").value).replace("-", " ") || "Bulan belum dipilih";
+  $("sumDays").innerHTML = state.rows.length
+    ? state.rows.map((r) => {
+        const d = dateFromISO(r.tanggal);
+        return `<span title="${escapeHTML(formatDateID(r.tanggal))}">${d.getDate()} ${MONTH_NAMES[d.getMonth()].slice(0, 3)}</span>`;
+      }).join("")
+    : `<p>Belum ada tanggal. Pilih di langkah 3.</p>`;
 }
 
 function renderTemplates() {
@@ -307,6 +338,8 @@ function fillEmployee(emp) {
   $("nik").value = emp.nik || "";
   $("unitKerja").value = emp.unitKerja || "";
   $("jabatan").value = emp.jabatan || "";
+  saveProfile();
+  renderSummary();
   if (emp.templates) {
     state.templates = { ...state.templates, ...emp.templates };
     renderTemplates();
@@ -435,13 +468,12 @@ function renderRows() {
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${index + 1}</td>
-      <td><input class="mini-input" type="date" value="${row.tanggal}" data-field="tanggal"></td>
-      <td>${row.hari}</td>
+      <td><input class="mini-input" type="date" value="${row.tanggal}" data-field="tanggal"><span class="row-day">${row.hari}</span></td>
       <td><textarea rows="2" data-field="kegiatan">${escapeHTML(row.kegiatan || "")}</textarea></td>
       <td><div class="time-group"><input class="mini-input" type="time" value="${row.aktualMulai}" data-field="aktualMulai"><input class="mini-input" type="time" value="${row.aktualSelesai}" data-field="aktualSelesai"></div></td>
       <td><div class="time-group"><input class="mini-input" type="time" value="${row.hitungMulai}" data-field="hitungMulai"><input class="mini-input" type="time" value="${row.hitungSelesai}" data-field="hitungSelesai"></div></td>
       <td><strong>${hoursText(row.totalJam)}</strong></td>
-      <td><button class="action-link" type="button">Hapus</button></td>
+      <td><button class="action-link" type="button" title="Hapus baris" aria-label="Hapus baris ${index + 1}">✕</button></td>
     `;
     tr.querySelectorAll("input, textarea").forEach((el) => {
       el.addEventListener("change", () => updateRow(row.id, el.dataset.field, el.value));
@@ -450,6 +482,7 @@ function renderRows() {
     body.appendChild(tr);
   });
   $("totalJamCell").textContent = hoursText(total);
+  renderSummary();
 }
 
 function escapeHTML(str) {
@@ -615,7 +648,7 @@ async function loadDataFromSheet() {
     saveLocal();
     renderEmployees();
     renderTemplates();
-    setStatus("Data berhasil dimuat dari Spreadsheet.");
+    setStatus("Data berhasil dimuat dari Spreadsheet.", "success");
   } catch (err) {
     console.error(err);
     setStatus("Gagal memuat data Spreadsheet. Cek Web App URL dan izin akses.", "error");
@@ -634,7 +667,7 @@ async function saveTemplateToSheet() {
   }
   try {
     await apiPost({ action: "saveTemplate", nik, templates: state.templates });
-    setStatus("Template berhasil disimpan ke Spreadsheet.");
+    setStatus("Template berhasil disimpan ke Spreadsheet.", "success");
     openCard("cardStep3");
   } catch (err) {
     console.error(err);
@@ -656,7 +689,7 @@ async function saveSubmission() {
     const result = await apiPost(data);
     if (result && result.id) state.lastSubmissionId = result.id;
     saveLocal();
-    setStatus(`Pengajuan ${state.lastSubmissionId || data.id} berhasil disimpan.`);
+    setStatus(`Pengajuan ${state.lastSubmissionId || data.id} berhasil disimpan.`, "success");
   } catch (err) {
     console.error(err);
     setStatus("Gagal menyimpan pengajuan. Data masih tersimpan lokal di browser.", "error");
@@ -677,7 +710,7 @@ function syncCollapseButton(card) {
   const btn = card.querySelector(".collapse-btn");
   if (!btn) return;
   const collapsed = card.classList.contains("collapsed");
-  btn.textContent = collapsed ? "Buka" : "Minimalkan";
+  btn.textContent = collapsed ? "Buka" : "Tutup";
   btn.setAttribute("aria-expanded", collapsed ? "false" : "true");
 }
 
@@ -688,8 +721,16 @@ function setCardCollapsed(cardOrId, collapsed) {
   syncCollapseButton(card);
 }
 
+function setActiveNav(cardId) {
+  document.querySelectorAll("[data-goto]").forEach((b) => {
+    if (b.dataset.goto === cardId) b.setAttribute("aria-current", "true");
+    else b.removeAttribute("aria-current");
+  });
+}
+
 function openCard(cardId) {
   setCardCollapsed(cardId, false);
+  setActiveNav(cardId);
 }
 
 function setupCollapsibleCards() {
@@ -814,10 +855,19 @@ function bindEvents() {
   $("btnPreview").addEventListener("click", buildPreview);
   $("btnSaveSubmission").addEventListener("click", saveSubmission);
   $("btnPrint").addEventListener("click", printDocument);
-  $("btnPrintTop").addEventListener("click", printDocument);
   $("btnPrintPreview").addEventListener("click", printDocument);
   $("btnEdit").addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
   $("btnLoadData").addEventListener("click", loadDataFromSheet);
+  document.querySelectorAll("[data-goto]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      openCard(btn.dataset.goto);
+      $(btn.dataset.goto).scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+  PROFILE_FIELDS.forEach((id) => {
+    $(id).addEventListener("input", () => { saveProfile(); renderSummary(); });
+  });
+  $("bulanPengajuan").addEventListener("change", renderSummary);
 }
 
 function initDemoDataIfEmpty() {
@@ -843,6 +893,10 @@ function init() {
   if (!Array.isArray(state.calendarSelected)) state.calendarSelected = [];
   initDemoDataIfEmpty();
   bindEvents();
+  if (restoreProfile()) {
+    setCardCollapsed("cardStep1", true);
+    openCard("cardStep3");
+  }
   renderEmployees();
   renderTemplates();
   renderRows();

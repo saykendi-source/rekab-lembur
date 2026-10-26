@@ -4,19 +4,19 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Laporan Pengajuan Lembur</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header class="app-header no-print">
-    <div>
-      <p class="eyebrow">Aplikasi Internal</p>
-      <h1>Laporan Pengajuan Lembur</h1>
-      <p class="subtitle">Input kegiatan, hitung jam lembur, simpan pengajuan, lalu cetak atau simpan PDF.</p>
-    </div>
+  <div class="mac-window">
+  <header class="app-header titlebar no-print">
+    <div class="traffic" aria-hidden="true"><span></span><span></span><span></span></div>
+    <h1>Laporan Pengajuan Lembur</h1>
     <div class="header-actions">
-      <button id="btnHelp" class="btn info" type="button">Info Pemakaian</button>
-      <button id="btnLoadData" class="btn secondary" type="button">Muat Data</button>
-      <button id="btnPrintTop" class="btn primary" type="button">Cetak / PDF</button>
+      <button id="btnHelp" class="btn" type="button">Info Pemakaian</button>
+      <button id="btnLoadData" class="btn" type="button">Muat Data</button>
     </div>
   </header>
 
@@ -25,7 +25,6 @@
     <div class="help-backdrop" data-close-help></div>
     <div class="help-panel" role="dialog" aria-modal="true" aria-labelledby="usageTitle">
       <button id="btnCloseHelp" class="help-close" type="button" aria-label="Tutup informasi">×</button>
-      <p class="eyebrow">Petunjuk Singkat</p>
       <h2 id="usageTitle">Urutan Pemakaian Aplikasi</h2>
       <ol class="usage-list">
         <li><strong>Muat Data</strong> untuk mengambil master pegawai dan template dari Spreadsheet.</li>
@@ -43,7 +42,37 @@
     </div>
   </div>
 
-  <main class="layout">
+  <div class="layout">
+  <aside class="sidebar no-print" aria-label="Navigasi dan ringkasan">
+    <div class="sidebar-inner">
+    <nav class="side-nav" aria-label="Langkah">
+      <p class="side-label">Langkah</p>
+      <button type="button" data-goto="cardStep1"><i class="ic ic1">1</i>Data Pegawai</button>
+      <button type="button" data-goto="cardStep2"><i class="ic ic2">2</i>Template Kegiatan</button>
+      <button type="button" data-goto="cardStep3"><i class="ic ic3">3</i>Tanggal &amp; Jam</button>
+      <button type="button" data-goto="cardStep4"><i class="ic ic4">4</i>Daftar Lembur</button>
+    </nav>
+    <section class="summary" aria-label="Ringkasan pengajuan">
+      <p class="side-label">Ringkasan</p>
+    <div class="summary-head">
+      <p id="sumBulan" class="summary-month">Bulan</p>
+      <p id="sumNama" class="summary-name">Nama belum diisi</p>
+    </div>
+    <dl class="summary-stats">
+      <div><dt>Hari lembur</dt><dd id="sumHari">0</dd></div>
+      <div><dt>Total jam</dt><dd><span id="sumJam">0</span> <small>jam</small></dd></div>
+    </dl>
+    <div id="sumDays" class="summary-days"></div>
+    <div class="summary-actions">
+      <button id="btnPreview" class="btn" type="button">Tampilkan preview</button>
+      <button id="btnSaveSubmission" class="btn primary" type="button">Simpan pengajuan</button>
+      <button id="btnPrint" class="btn" type="button">Cetak / PDF</button>
+    </div>
+    <p id="statusMessage" class="status-message" role="status" aria-live="polite"></p>
+    </section>
+    </div>
+  </aside>
+  <main class="steps">
     <section id="cardStep1" class="card no-print collapsible">
       <div class="section-title">
         <span class="step">1</span>
@@ -51,7 +80,7 @@
           <h2>Data Pegawai</h2>
           <p>Pilih dari master pegawai atau isi manual.</p>
         </div>
-        <button class="collapse-btn" type="button" aria-expanded="true" aria-controls="cardStep1">Minimalkan</button>
+        <button class="collapse-btn" type="button" aria-expanded="true" aria-controls="cardStep1">Tutup</button>
       </div>
 
       <div class="grid three">
@@ -73,7 +102,7 @@
           <input id="unitKerja" placeholder="Unit kerja" />
         </label>
         <label>
-          Jabatan <span class="muted">opsional</span>
+          <span>Jabatan <span class="muted">(opsional)</span></span>
           <input id="jabatan" placeholder="Jabatan" />
         </label>
         <label>
@@ -95,7 +124,7 @@
 
       <div class="template-grid" id="templateGrid"></div>
       <div class="toolbar">
-        <button id="btnSaveTemplate" class="btn secondary">Simpan Template</button>
+        <button id="btnSaveTemplate" class="btn primary">Simpan Template</button>
         <button id="btnClearTemplate" class="btn ghost">Kosongkan Template</button>
       </div>
     </section>
@@ -181,7 +210,7 @@
           <input id="hitungSelesai" type="time" value="20:00" />
         </label>
         <label class="wide">
-          Kegiatan <span class="muted">otomatis, bisa diedit</span>
+          <span>Kegiatan <span class="muted">(otomatis, bisa diedit)</span></span>
           <textarea id="kegiatanSingle" rows="2" placeholder="Kegiatan lembur"></textarea>
         </label>
       </div>
@@ -247,18 +276,17 @@
             <tr>
               <th>No</th>
               <th>Tanggal</th>
-              <th>Hari</th>
               <th>Kegiatan</th>
               <th>Aktual</th>
               <th>Dihitung</th>
-              <th>Total Jam</th>
-              <th>Aksi</th>
+              <th>Total</th>
+              <th><span class="visually-hidden">Aksi</span></th>
             </tr>
           </thead>
           <tbody id="overtimeBody"></tbody>
           <tfoot>
             <tr>
-              <td colspan="6">Total</td>
+              <td colspan="5">Total</td>
               <td id="totalJamCell">0 jam</td>
               <td></td>
             </tr>
@@ -285,22 +313,18 @@
         </label>
       </div>
 
-      <div class="toolbar">
-        <button id="btnPreview" class="btn secondary">Tampilkan Preview</button>
-        <button id="btnSaveSubmission" class="btn primary">Simpan Pengajuan</button>
-        <button id="btnPrint" class="btn primary">Cetak / Simpan PDF</button>
-      </div>
-      <p id="statusMessage" class="status-message"></p>
     </section>
 
     <section class="preview-card" id="previewCard">
       <div class="print-toolbar no-print">
-        <button id="btnEdit" class="btn secondary">Edit Kembali</button>
+        <button id="btnEdit" class="btn">Edit Kembali</button>
         <button id="btnPrintPreview" class="btn primary">Cetak / Simpan PDF</button>
       </div>
       <div id="printArea" class="print-area"></div>
     </section>
   </main>
+</div>
+  </div>
 
   <script src="app.js"></script>
 </body>
