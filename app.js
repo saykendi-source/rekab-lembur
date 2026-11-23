@@ -16,7 +16,7 @@ const MONTH_NAMES = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Ju
 const SHORT_DAYS = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
 const STORAGE_KEY = "lembur-app-v1";
 
-// Daftar tanggal merah Indonesia 2026 berdasarkan SKB 3 Menteri.
+// Daftar tanggal merah Indonesia 2026–2027 berdasarkan SKB 3 Menteri.
 // Minggu otomatis ditandai merah walaupun tidak ada di daftar ini.
 const INDONESIA_HOLIDAYS = {
   "2026-01-01": { type: "holiday", name: "Tahun Baru 2026" },
@@ -43,8 +43,39 @@ const INDONESIA_HOLIDAYS = {
   "2026-08-17": { type: "holiday", name: "Kemerdekaan RI" },
   "2026-08-25": { type: "holiday", name: "Maulid Nabi" },
   "2026-12-24": { type: "leave", name: "Cuti bersama Natal" },
-  "2026-12-25": { type: "holiday", name: "Natal" }
+  "2026-12-25": { type: "holiday", name: "Natal" },
+
+  // 2027 — SKB 3 Menteri No. 1205, 3, 2 Tahun 2026 (18 libur nasional + 8 cuti bersama)
+  "2027-01-01": { type: "holiday", name: "Tahun Baru 2027" },
+  "2027-01-05": { type: "holiday", name: "Isra Mikraj 1448 H" },
+  "2027-02-05": { type: "leave", name: "Cuti bersama Imlek" },
+  "2027-02-06": { type: "holiday", name: "Tahun Baru Imlek" },
+  "2027-03-08": { type: "holiday", name: "Hari Suci Nyepi" },
+  "2027-03-09": { type: "leave", name: "Cuti bersama Idulfitri" },
+  "2027-03-10": { type: "holiday", name: "Idulfitri 1448 H" },
+  "2027-03-11": { type: "holiday", name: "Idulfitri 1448 H" },
+  "2027-03-12": { type: "leave", name: "Cuti bersama Idulfitri" },
+  "2027-03-15": { type: "leave", name: "Cuti bersama Idulfitri" },
+  "2027-03-25": { type: "leave", name: "Cuti bersama Wafat Yesus" },
+  "2027-03-26": { type: "holiday", name: "Wafat Yesus Kristus" },
+  "2027-03-28": { type: "holiday", name: "Paskah" },
+  "2027-05-01": { type: "holiday", name: "Hari Buruh" },
+  "2027-05-06": { type: "holiday", name: "Kenaikan Yesus Kristus" },
+  "2027-05-17": { type: "holiday", name: "Iduladha 1448 H" },
+  "2027-05-18": { type: "leave", name: "Cuti bersama Iduladha" },
+  "2027-05-19": { type: "leave", name: "Cuti bersama Waisak" },
+  "2027-05-20": { type: "holiday", name: "Hari Raya Waisak" },
+  "2027-06-01": { type: "holiday", name: "Hari Lahir Pancasila" },
+  "2027-06-06": { type: "holiday", name: "Tahun Baru Islam" },
+  "2027-08-15": { type: "holiday", name: "Maulid Nabi" },
+  "2027-08-17": { type: "holiday", name: "Kemerdekaan RI" },
+  "2027-12-24": { type: "leave", name: "Cuti bersama Natal" },
+  "2027-12-25": { type: "holiday", name: "Natal" },
+  "2027-12-26": { type: "holiday", name: "Isra Mikraj 1449 H" }
 };
+
+// Tahun yang daftar tanggal merahnya sudah tersedia.
+const HOLIDAY_YEARS = new Set(Object.keys(INDONESIA_HOLIDAYS).map((iso) => iso.slice(0, 4)));
 
 const $ = (id) => document.getElementById(id);
 
@@ -53,7 +84,10 @@ let state = {
   templates: {},
   rows: [],
   calendarSelected: [],
-  lastSubmissionId: ""
+  // ID pengajuan disimpan per bulan: { "2026-11": "LBR-202611-12345" }.
+  // Dengan begitu menyimpan bulan baru selalu membuat ID baru,
+  // dan menyimpan ulang bulan yang sama memperbarui pengajuan bulan itu saja.
+  submissionIds: {}
 };
 
 function loadLocal() {
@@ -63,6 +97,16 @@ function loadLocal() {
   } catch (err) {
     console.warn("Gagal membaca localStorage", err);
   }
+  if (!state.submissionIds || typeof state.submissionIds !== "object") state.submissionIds = {};
+  // Migrasi dari versi lama: ID tunggal dipindahkan ke bulan yang tertulis di ID-nya.
+  if (state.lastSubmissionId) {
+    const m = String(state.lastSubmissionId).match(/^LBR-(\d{4})(\d{2})-/);
+    if (m) {
+      const key = `${m[1]}-${m[2]}`;
+      if (!state.submissionIds[key]) state.submissionIds[key] = state.lastSubmissionId;
+    }
+  }
+  delete state.lastSubmissionId;
 }
 
 function saveLocal() {
@@ -231,7 +275,14 @@ function renderCalendar() {
   const infoText = selectedInMonth.length
     ? `${selectedInMonth.length} tanggal dipilih: ${selectedInMonth.map((iso) => formatDateID(iso)).join(", ")}`
     : "Belum ada tanggal dipilih pada bulan ini.";
-  $("calendarSelectedInfo").textContent = infoText;
+  const info = $("calendarSelectedInfo");
+  info.textContent = infoText;
+  if (!HOLIDAY_YEARS.has(String(year))) {
+    const warn = document.createElement("span");
+    warn.className = "warn";
+    warn.textContent = `Data tanggal merah tahun ${year} belum tersedia — tambahkan di INDONESIA_HOLIDAYS (app.js) setelah SKB terbit. Hari Minggu tetap ditandai.`;
+    info.appendChild(warn);
+  }
 }
 
 function toMinutes(time) {
@@ -279,14 +330,51 @@ function restoreProfile() {
   return Boolean(p.nama && p.nik && p.unitKerja);
 }
 
+function round2(n) {
+  return Math.round(n * 100) / 100;
+}
+
+function initials(name) {
+  const parts = String(name || "").trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return "?";
+  return (parts[0][0] + (parts.length > 1 ? parts[parts.length - 1][0] : "")).toUpperCase();
+}
+
+function greetingWord() {
+  const h = new Date().getHours();
+  if (h < 11) return "Selamat pagi";
+  if (h < 15) return "Selamat siang";
+  if (h < 18) return "Selamat sore";
+  return "Selamat malam";
+}
+
 function renderSummary() {
   if (!$("sumJam")) return;
   const total = state.rows.reduce((sum, r) => sum + Number(r.totalJam || 0), 0);
-  const rounded = Math.round(total * 100) / 100;
+  const aktual = state.rows.reduce((sum, r) => sum + minutesDiff(r.aktualMulai, r.aktualSelesai) / 60, 0);
+  const libur = state.rows.filter((r) => getDayName(r.tanggal) === "Minggu" || getHolidayInfo(r.tanggal)).length;
+  const rounded = round2(total);
+  const nama = $("nama").value.trim();
+  const nik = $("nik").value.trim();
+  const unit = $("unitKerja").value.trim();
+
   $("sumJam").textContent = rounded.toLocaleString("id-ID");
   $("sumHari").textContent = state.rows.length;
-  $("sumNama").textContent = $("nama").value.trim() || "Nama belum diisi";
+  $("sumAktual").textContent = round2(aktual).toLocaleString("id-ID");
+  $("sumRata").textContent = state.rows.length ? round2(total / state.rows.length).toLocaleString("id-ID") : "0";
+  $("sumLibur").textContent = libur;
+  $("sumNama").textContent = nama ? [nama, unit].filter(Boolean).join(" · ") : "Nama belum diisi";
   $("sumBulan").textContent = formatMonthID($("bulanPengajuan").value).replace("-", " ") || "Bulan belum dipilih";
+
+  const firstName = nama.split(/\s+/)[0] || "";
+  $("greeting").textContent = firstName ? `${greetingWord()}, ${firstName}` : greetingWord();
+  const today = new Date().toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  $("greetSub").textContent = `${today} · ${state.rows.length} tanggal lembur · ${hoursText(total)} dihitung`;
+  $("sideAvatar").textContent = initials(nama);
+  $("topAvatar").textContent = initials(nama);
+  $("sideNama").textContent = nama || "Nama belum diisi";
+  $("sideNik").textContent = nik ? `NIK ${nik}` : "NIK —";
+
   $("sumDays").innerHTML = state.rows.length
     ? state.rows.map((r) => {
         const d = dateFromISO(r.tanggal);
@@ -431,12 +519,33 @@ function addRangeRows() {
 }
 
 function upsertRows(rows) {
+  // Tanggal baru ditambahkan. Tanggal yang sudah ada hanya diperbarui jamnya;
+  // kegiatan yang sudah ada (termasuk hasil edit manual) tidak ditimpa template.
   const byDate = new Map(state.rows.map((r) => [r.tanggal, r]));
-  rows.forEach((r) => byDate.set(r.tanggal, r));
+  let added = 0;
+  let updated = 0;
+  rows.forEach((r) => {
+    const existing = byDate.get(r.tanggal);
+    if (existing) {
+      existing.aktualMulai = r.aktualMulai;
+      existing.aktualSelesai = r.aktualSelesai;
+      existing.hitungMulai = r.hitungMulai;
+      existing.hitungSelesai = r.hitungSelesai;
+      if (!String(existing.kegiatan || "").trim()) existing.kegiatan = r.kegiatan;
+      calculateRow(existing);
+      updated += 1;
+    } else {
+      byDate.set(r.tanggal, r);
+      added += 1;
+    }
+  });
   state.rows = [...byDate.values()].sort((a, b) => a.tanggal.localeCompare(b.tanggal));
   saveLocal();
   renderRows();
-  setStatus(`${rows.length} baris lembur ditambahkan/diperbarui.`);
+  const parts = [];
+  if (added) parts.push(`${added} tanggal ditambahkan`);
+  if (updated) parts.push(`${updated} tanggal diperbarui jamnya (kegiatan tetap)`);
+  setStatus(parts.join(", ") + ".", "success");
 }
 
 function updateRow(id, field, value) {
@@ -516,11 +625,19 @@ function validateSubmission() {
   return "";
 }
 
-function collectSubmission(status = "Draft") {
+// ID pengajuan hanya dibuat saat menyimpan (bukan saat preview), dan selalu per bulan.
+function submissionIdFor(bulan, create) {
+  const existing = state.submissionIds[bulan];
+  if (existing || !create) return existing || "";
+  const id = makeSubmissionId(bulan);
+  state.submissionIds[bulan] = id;
+  return id;
+}
+
+function collectSubmission(status = "Draft", { createId = false } = {}) {
   const totalJam = state.rows.reduce((sum, r) => sum + Number(r.totalJam || 0), 0);
   const bulan = $("bulanPengajuan").value || monthISO();
-  const id = state.lastSubmissionId || makeSubmissionId(bulan);
-  state.lastSubmissionId = id;
+  const id = submissionIdFor(bulan, createId);
   return {
     action: "savePengajuan",
     id,
@@ -678,18 +795,30 @@ async function saveTemplateToSheet() {
 async function saveSubmission() {
   const err = validateSubmission();
   if (err) return setStatus(err, "error");
-  const data = collectSubmission("Diajukan");
+  const bulan = $("bulanPengajuan").value || monthISO();
+  const outside = state.rows.filter((r) => !r.tanggal.startsWith(bulan));
+  if (outside.length) {
+    const ok = confirm(
+      `${outside.length} tanggal di daftar berada di luar bulan pengajuan (${formatMonthID(bulan).replace("-", " ")}).\n` +
+      "Tetap simpan sebagai pengajuan bulan ini?"
+    );
+    if (!ok) return setStatus("Penyimpanan dibatalkan. Periksa Bulan Pengajuan atau daftar tanggal.", "error");
+  }
+  const isUpdate = Boolean(state.submissionIds[bulan]);
+  const data = collectSubmission("Diajukan", { createId: true });
   saveLocal();
+  const verb = isUpdate ? "diperbarui" : "disimpan";
   if (!isConnected()) {
-    setStatus(`Pengajuan ${data.id} tersimpan lokal. Isi SCRIPT_URL untuk menyimpan ke Spreadsheet.`);
+    setStatus(`Pengajuan ${data.id} ${verb} lokal. Isi SCRIPT_URL untuk menyimpan ke Spreadsheet.`);
     return;
   }
   try {
     setStatus("Menyimpan pengajuan ke Spreadsheet...");
     const result = await apiPost(data);
-    if (result && result.id) state.lastSubmissionId = result.id;
+    if (result && result.ok === false) throw new Error(result.error || "Gagal di server");
+    if (result && result.id) state.submissionIds[bulan] = result.id;
     saveLocal();
-    setStatus(`Pengajuan ${state.lastSubmissionId || data.id} berhasil disimpan.`, "success");
+    setStatus(`Pengajuan ${state.submissionIds[bulan]} berhasil ${verb}.`, "success");
   } catch (err) {
     console.error(err);
     setStatus("Gagal menyimpan pengajuan. Data masih tersimpan lokal di browser.", "error");
@@ -839,7 +968,6 @@ function bindEvents() {
   $("btnResetRows").addEventListener("click", () => {
     if (confirm("Kosongkan semua daftar lembur?")) {
       state.rows = [];
-      state.lastSubmissionId = "";
       saveLocal();
       renderRows();
       setStatus("Daftar lembur dikosongkan.");

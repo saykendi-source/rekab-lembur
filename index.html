@@ -6,7 +6,7 @@
   <title>Laporan Pengajuan Lembur</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -26,304 +26,391 @@
         <li><strong>Simpan Pengajuan</strong> ke Spreadsheet, lalu Cetak / Simpan PDF.</li>
       </ol>
       <div class="help-tip">
-        Tips: kotak langkah bisa dibuka/tutup memakai tombol di kanan judul agar halaman tetap ringkas.
+        Satu bulan = satu pengajuan. Menyimpan ulang bulan yang sama akan memperbarui pengajuan bulan itu, bukan menimpa bulan lain.
       </div>
     </div>
   </div>
 
-  <div class="mac-window">
-  <header class="app-header titlebar no-print">
-    <div class="traffic" aria-hidden="true"><span></span><span></span><span></span></div>
-    <h1>Laporan Pengajuan Lembur</h1>
-    <div class="header-actions">
-      <button id="btnHelp" class="btn" type="button">Info Pemakaian</button>
-      <button id="btnLoadData" class="btn" type="button">Muat Data</button>
-    </div>
-  </header>
+  <div class="app">
+    <!-- ===== Sidebar ===== -->
+    <aside class="sidebar no-print" aria-label="Navigasi">
+      <div class="brand">
+        <span class="brand-logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
+        </span>
+        <div>
+          <strong>Lembur</strong>
+          <small>Laporan pengajuan</small>
+        </div>
+      </div>
 
-
-  <div class="layout">
-  <aside class="sidebar no-print" aria-label="Navigasi dan ringkasan">
-    <div class="sidebar-inner">
-    <nav class="side-nav" aria-label="Langkah">
       <p class="side-label">Langkah</p>
-      <button type="button" data-goto="cardStep1"><i class="ic ic1">1</i>Data Pegawai</button>
-      <button type="button" data-goto="cardStep2"><i class="ic ic2">2</i>Template Kegiatan</button>
-      <button type="button" data-goto="cardStep3"><i class="ic ic3">3</i>Tanggal &amp; Jam</button>
-      <button type="button" data-goto="cardStep4"><i class="ic ic4">4</i>Daftar Lembur</button>
-    </nav>
-    <section class="summary" aria-label="Ringkasan pengajuan">
-      <p class="side-label">Ringkasan</p>
-    <div class="summary-head">
-      <p id="sumBulan" class="summary-month">Bulan</p>
-      <p id="sumNama" class="summary-name">Nama belum diisi</p>
-    </div>
-    <dl class="summary-stats">
-      <div><dt>Hari lembur</dt><dd id="sumHari">0</dd></div>
-      <div><dt>Total jam</dt><dd><span id="sumJam">0</span> <small>jam</small></dd></div>
-    </dl>
-    <div id="sumDays" class="summary-days"></div>
-    <div class="summary-actions">
-      <button id="btnPreview" class="btn" type="button">Tampilkan preview</button>
-      <button id="btnSaveSubmission" class="btn primary" type="button">Simpan pengajuan</button>
-      <button id="btnPrint" class="btn" type="button">Cetak / PDF</button>
-    </div>
-    <p id="statusMessage" class="status-message" role="status" aria-live="polite"></p>
-    </section>
-    </div>
-  </aside>
-  <main class="steps">
-    <section id="cardStep1" class="card no-print collapsible">
-      <div class="section-title">
-        <span class="step">1</span>
+      <nav class="side-nav" aria-label="Langkah">
+        <button type="button" data-goto="cardStep1">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 19.5c1.2-3.3 4-5 7-5s5.8 1.7 7 5"/></svg>
+          <span>Data Pegawai</span>
+        </button>
+        <button type="button" data-goto="cardStep2">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h11M8 12h11M8 18h11"/><circle cx="4.5" cy="6" r=".8"/><circle cx="4.5" cy="12" r=".8"/><circle cx="4.5" cy="18" r=".8"/></svg>
+          <span>Template Kegiatan</span>
+        </button>
+        <button type="button" data-goto="cardStep3">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>
+          <span>Tanggal &amp; Jam</span>
+        </button>
+        <button type="button" data-goto="cardStep4">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3.5" width="16" height="17" rx="3"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>
+          <span>Daftar Lembur</span>
+        </button>
+      </nav>
+
+      <div class="side-spacer"></div>
+
+      <div class="promo">
+        <span class="promo-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M7 9V4h10v5"/><rect x="4" y="9" width="16" height="8" rx="2"/><path d="M7 14h10v6H7z"/></svg>
+        </span>
+        <strong>Siap dicetak?</strong>
+        <p>Cek preview, lalu pilih “Save as PDF” di jendela cetak.</p>
+        <button id="btnPrint" class="btn promo-btn" type="button">Cetak / PDF</button>
+      </div>
+
+      <div class="profile-chip">
+        <span id="sideAvatar" class="avatar">?</span>
         <div>
-          <h2>Data Pegawai</h2>
-          <p>Pilih dari master pegawai atau isi manual.</p>
+          <strong id="sideNama">Nama belum diisi</strong>
+          <small id="sideNik">NIK —</small>
         </div>
-        <button class="collapse-btn" type="button" aria-expanded="true" aria-controls="cardStep1">Tutup</button>
       </div>
+    </aside>
 
-      <div class="grid three">
-        <label>
-          Cari Pegawai
-          <input id="employeeSearch" list="employeeList" placeholder="Ketik nama / NIK" autocomplete="off" />
-          <datalist id="employeeList"></datalist>
-        </label>
-        <label>
-          Nama
-          <input id="nama" placeholder="Nama pegawai" />
-        </label>
-        <label>
-          NIK
-          <input id="nik" placeholder="NIK" />
-        </label>
-        <label class="wide">
-          Unit Kerja
-          <input id="unitKerja" placeholder="Unit kerja" />
-        </label>
-        <label>
-          <span>Jabatan <span class="muted">(opsional)</span></span>
-          <input id="jabatan" placeholder="Jabatan" />
-        </label>
-        <label>
-          Bulan Pengajuan
-          <input id="bulanPengajuan" type="month" />
-        </label>
-      </div>
-    </section>
-
-    <section id="cardStep2" class="card no-print collapsible collapsed">
-      <div class="section-title">
-        <span class="step">2</span>
-        <div>
-          <h2>Template Kegiatan Senin–Sabtu</h2>
-          <p>Kegiatan default akan otomatis muncul saat tanggal lembur dipilih.</p>
+    <!-- ===== Konten utama ===== -->
+    <div class="main">
+      <header class="topbar no-print">
+        <p class="crumb">Lembur <span>›</span> <b>Beranda</b></p>
+        <div class="top-actions">
+          <button id="btnHelp" class="btn soft" type="button">Info Pemakaian</button>
+          <button id="btnLoadData" class="btn soft" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v4h-4"/></svg>
+            Muat Data
+          </button>
+          <span id="topAvatar" class="avatar ring" aria-hidden="true">?</span>
         </div>
-        <button class="collapse-btn" type="button" aria-expanded="false" aria-controls="cardStep2">Buka</button>
-      </div>
+      </header>
 
-      <div class="template-grid" id="templateGrid"></div>
-      <div class="toolbar">
-        <button id="btnSaveTemplate" class="btn primary">Simpan Template</button>
-        <button id="btnClearTemplate" class="btn ghost">Kosongkan Template</button>
-      </div>
-    </section>
+      <section class="greeting no-print">
+        <h1 id="greeting">Selamat pagi</h1>
+        <p id="greetSub"></p>
+      </section>
 
-    <section id="cardStep3" class="card no-print collapsible collapsed">
-      <div class="section-title">
-        <span class="step">3</span>
-        <div>
-          <h2>Input Tanggal dan Jam Lembur</h2>
-          <p>Pilih tanggal lembur langsung dari kalender bulanan. Tanggal merah Indonesia dan hari Minggu diberi tanda khusus.</p>
-        </div>
-        <button class="collapse-btn" type="button" aria-expanded="false" aria-controls="cardStep3">Buka</button>
-      </div>
-
-      <div class="mode-toggle">
-        <label><input type="radio" name="modeTanggal" value="calendar" checked /> Pilih dari Kalender</label>
-        <label><input type="radio" name="modeTanggal" value="single" /> Satu tanggal</label>
-        <label><input type="radio" name="modeTanggal" value="range" /> Periode tanggal</label>
-      </div>
-
-      <div id="calendarDateBox">
-        <input id="calendarMonth" type="hidden" />
-        <div class="grid four">
-          <label>
-            Bulan Kalender
-            <select id="calendarMonthSelect"></select>
-          </label>
-          <label>
-            Tahun Kalender
-            <select id="calendarYearSelect"></select>
-          </label>
-          <label>
-            Jam Aktual Mulai
-            <input id="calendarAktualMulai" type="time" value="16:00" />
-          </label>
-          <label>
-            Jam Aktual Selesai
-            <input id="calendarAktualSelesai" type="time" value="20:00" />
-          </label>
-          <label>
-            Mulai Dihitung
-            <input id="calendarHitungMulai" type="time" value="17:00" />
-          </label>
-          <label>
-            Selesai Dihitung
-            <input id="calendarHitungSelesai" type="time" value="20:00" />
-          </label>
-        </div>
-        <div class="calendar-help">
-          <div>
-            <strong>Pilih tanggal:</strong> klik tanggal yang akan diajukan lembur. Tanggal merah tetap bisa dipilih apabila memang ada lembur.
+      <section class="overview no-print" aria-label="Ringkasan pengajuan">
+        <div class="hero">
+          <div class="hero-body">
+            <span class="tag"><i></i>Pengajuan bulan ini</span>
+            <h2 id="sumBulan">Bulan</h2>
+            <p id="sumNama" class="hero-sub">Nama belum diisi</p>
+            <div class="hero-actions">
+              <button id="btnSaveSubmission" class="btn primary" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+                Simpan pengajuan
+              </button>
+              <button id="btnPreview" class="btn ghost-light" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6.5 9.5-6.5S21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></svg>
+                Tampilkan preview
+              </button>
+            </div>
+            <div id="sumDays" class="summary-days"></div>
+            <p id="statusMessage" class="status-message" role="status" aria-live="polite"></p>
           </div>
-          <div class="calendar-legend">
-            <span><i class="legend-dot selected-dot"></i> Dipilih</span>
-            <span><i class="legend-dot holiday-dot"></i> Libur nasional</span>
-            <span><i class="legend-dot leave-dot"></i> Cuti bersama</span>
-            <span><i class="legend-dot sunday-dot"></i> Minggu</span>
+          <div class="disc" aria-hidden="false">
+            <div class="disc-grooves"></div>
+            <div class="disc-label">
+              <strong id="sumJam">0</strong>
+              <small>jam dihitung</small>
+            </div>
           </div>
         </div>
-        <div id="calendarGrid" class="calendar-grid" aria-label="Kalender pilihan tanggal lembur"></div>
-        <p id="calendarSelectedInfo" class="calendar-selected-info">Belum ada tanggal dipilih.</p>
-      </div>
 
-      <div id="singleDateBox" class="grid four hidden">
-        <label>
-          Tanggal Lembur
-          <input id="tanggalSingle" type="date" />
-        </label>
-        <label>
-          Jam Aktual Mulai
-          <input id="aktualMulai" type="time" value="16:00" />
-        </label>
-        <label>
-          Jam Aktual Selesai
-          <input id="aktualSelesai" type="time" value="20:00" />
-        </label>
-        <label>
-          Mulai Dihitung
-          <input id="hitungMulai" type="time" value="17:00" />
-        </label>
-        <label>
-          Selesai Dihitung
-          <input id="hitungSelesai" type="time" value="20:00" />
-        </label>
-        <label class="wide">
-          <span>Kegiatan <span class="muted">(otomatis, bisa diedit)</span></span>
-          <textarea id="kegiatanSingle" rows="2" placeholder="Kegiatan lembur"></textarea>
-        </label>
-      </div>
-
-      <div id="rangeDateBox" class="hidden">
-        <div class="grid four">
-          <label>
-            Dari Tanggal
-            <input id="tanggalMulai" type="date" />
-          </label>
-          <label>
-            Sampai Tanggal
-            <input id="tanggalSampai" type="date" />
-          </label>
-          <label>
-            Jam Aktual Mulai
-            <input id="rangeAktualMulai" type="time" value="16:00" />
-          </label>
-          <label>
-            Jam Aktual Selesai
-            <input id="rangeAktualSelesai" type="time" value="20:00" />
-          </label>
-          <label>
-            Mulai Dihitung
-            <input id="rangeHitungMulai" type="time" value="17:00" />
-          </label>
-          <label>
-            Selesai Dihitung
-            <input id="rangeHitungSelesai" type="time" value="20:00" />
-          </label>
+        <div class="tiles">
+          <div class="tile t-green">
+            <span class="tile-ic"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg></span>
+            <p>Hari lembur</p>
+            <strong id="sumHari">0</strong>
+            <small>tanggal di daftar</small>
+          </div>
+          <div class="tile t-peach">
+            <span class="tile-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span>
+            <p>Jam aktual</p>
+            <strong id="sumAktual">0</strong>
+            <small>total di kantor</small>
+          </div>
+          <div class="tile t-yellow">
+            <span class="tile-ic"><svg viewBox="0 0 24 24"><path d="M4 18l5-6 4 3 7-9"/></svg></span>
+            <p>Rata-rata</p>
+            <strong id="sumRata">0</strong>
+            <small>jam dihitung / hari</small>
+          </div>
+          <div class="tile t-blue">
+            <span class="tile-ic"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></span>
+            <p>Hari libur</p>
+            <strong id="sumLibur">0</strong>
+            <small>Minggu / tanggal merah</small>
+          </div>
         </div>
-        <div class="weekday-box">
-          <strong>Hari yang dimasukkan:</strong>
-          <label><input type="checkbox" class="weekdayPick" value="1" checked /> Senin</label>
-          <label><input type="checkbox" class="weekdayPick" value="2" checked /> Selasa</label>
-          <label><input type="checkbox" class="weekdayPick" value="3" checked /> Rabu</label>
-          <label><input type="checkbox" class="weekdayPick" value="4" checked /> Kamis</label>
-          <label><input type="checkbox" class="weekdayPick" value="5" checked /> Jumat</label>
-          <label><input type="checkbox" class="weekdayPick" value="6" checked /> Sabtu</label>
-          <label><input type="checkbox" class="weekdayPick" value="0" /> Minggu</label>
-        </div>
-      </div>
+      </section>
 
-      <div class="toolbar">
-        <button id="btnAddRows" class="btn primary">Tambahkan ke Daftar</button>
-        <button id="btnResetRows" class="btn ghost danger">Kosongkan Daftar</button>
-      </div>
-    </section>
+      <main class="steps">
+        <section id="cardStep1" class="card no-print collapsible">
+          <div class="section-title">
+            <span class="step">1</span>
+            <div>
+              <h2>Data Pegawai</h2>
+              <p>Pilih dari master pegawai atau isi manual.</p>
+            </div>
+            <button class="collapse-btn" type="button" aria-expanded="true" aria-controls="cardStep1">Tutup</button>
+          </div>
 
-    <section id="cardStep4" class="card no-print collapsible collapsed">
-      <div class="section-title">
-        <span class="step">4</span>
-        <div>
-          <h2>Daftar Lembur</h2>
-          <p>Semua baris masih bisa diedit sebelum disimpan atau dicetak.</p>
-        </div>
-        <button class="collapse-btn" type="button" aria-expanded="false" aria-controls="cardStep4">Buka</button>
-      </div>
+          <div class="grid three">
+            <label>
+              Cari Pegawai
+              <input id="employeeSearch" list="employeeList" placeholder="Ketik nama / NIK" autocomplete="off" />
+              <datalist id="employeeList"></datalist>
+            </label>
+            <label>
+              Nama
+              <input id="nama" placeholder="Nama pegawai" />
+            </label>
+            <label>
+              NIK
+              <input id="nik" placeholder="NIK" />
+            </label>
+            <label class="wide">
+              Unit Kerja
+              <input id="unitKerja" placeholder="Unit kerja" />
+            </label>
+            <label>
+              <span>Jabatan <span class="muted">(opsional)</span></span>
+              <input id="jabatan" placeholder="Jabatan" />
+            </label>
+            <label>
+              Bulan Pengajuan
+              <input id="bulanPengajuan" type="month" />
+            </label>
+          </div>
+        </section>
 
-      <div class="table-wrap">
-        <table class="data-table" id="overtimeTable">
-          <thead>
-            <tr>
-              <th>No</th>
-              <th>Tanggal</th>
-              <th>Kegiatan</th>
-              <th>Aktual</th>
-              <th>Dihitung</th>
-              <th>Total</th>
-              <th><span class="visually-hidden">Aksi</span></th>
-            </tr>
-          </thead>
-          <tbody id="overtimeBody"></tbody>
-          <tfoot>
-            <tr>
-              <td colspan="5">Total</td>
-              <td id="totalJamCell">0 jam</td>
-              <td></td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
+        <section id="cardStep2" class="card no-print collapsible collapsed">
+          <div class="section-title">
+            <span class="step">2</span>
+            <div>
+              <h2>Template Kegiatan Senin–Sabtu</h2>
+              <p>Kegiatan default akan otomatis muncul saat tanggal lembur dipilih.</p>
+            </div>
+            <button class="collapse-btn" type="button" aria-expanded="false" aria-controls="cardStep2">Buka</button>
+          </div>
 
-      <div class="grid two approval-grid">
-        <label>
-          Nama Atasan / Pejabat Mengetahui
-          <input id="atasanNama" placeholder="Nama pejabat" />
-        </label>
-        <label>
-          Jabatan Atasan
-          <input id="atasanJabatan" placeholder="Jabatan pejabat" />
-        </label>
-        <label>
-          Catatan
-          <textarea id="catatan" rows="2" placeholder="Catatan tambahan, jika ada"></textarea>
-        </label>
-        <label>
-          Lokasi dan Tanggal Tanda Tangan
-          <input id="lokasiTanggal" placeholder="Yogyakarta, 30 Juni 2026" />
-        </label>
-      </div>
+          <div class="template-grid" id="templateGrid"></div>
+          <div class="toolbar">
+            <button id="btnSaveTemplate" class="btn primary">Simpan Template</button>
+            <button id="btnClearTemplate" class="btn ghost">Kosongkan Template</button>
+          </div>
+        </section>
 
-    </section>
+        <section id="cardStep3" class="card no-print collapsible collapsed">
+          <div class="section-title">
+            <span class="step">3</span>
+            <div>
+              <h2>Input Tanggal dan Jam Lembur</h2>
+              <p>Pilih tanggal lembur dari kalender. Tanggal merah Indonesia dan hari Minggu diberi tanda khusus.</p>
+            </div>
+            <button class="collapse-btn" type="button" aria-expanded="false" aria-controls="cardStep3">Buka</button>
+          </div>
 
-    <section class="preview-card" id="previewCard">
-      <div class="print-toolbar no-print">
-        <button id="btnEdit" class="btn">Edit Kembali</button>
-        <button id="btnPrintPreview" class="btn primary">Cetak / Simpan PDF</button>
-      </div>
-      <div id="printArea" class="print-area"></div>
-    </section>
-  </main>
-</div>
+          <div class="mode-toggle">
+            <label><input type="radio" name="modeTanggal" value="calendar" checked /> Pilih dari Kalender</label>
+            <label><input type="radio" name="modeTanggal" value="single" /> Satu tanggal</label>
+            <label><input type="radio" name="modeTanggal" value="range" /> Periode tanggal</label>
+          </div>
+
+          <div id="calendarDateBox">
+            <input id="calendarMonth" type="hidden" />
+            <div class="grid four">
+              <label>
+                Bulan Kalender
+                <select id="calendarMonthSelect"></select>
+              </label>
+              <label>
+                Tahun Kalender
+                <select id="calendarYearSelect"></select>
+              </label>
+              <label>
+                Jam Aktual Mulai
+                <input id="calendarAktualMulai" type="time" value="16:00" />
+              </label>
+              <label>
+                Jam Aktual Selesai
+                <input id="calendarAktualSelesai" type="time" value="20:00" />
+              </label>
+              <label>
+                Mulai Dihitung
+                <input id="calendarHitungMulai" type="time" value="17:00" />
+              </label>
+              <label>
+                Selesai Dihitung
+                <input id="calendarHitungSelesai" type="time" value="20:00" />
+              </label>
+            </div>
+            <div class="calendar-help">
+              <div>
+                <strong>Pilih tanggal:</strong> klik tanggal yang akan diajukan lembur. Tanggal merah tetap bisa dipilih apabila memang ada lembur.
+              </div>
+              <div class="calendar-legend">
+                <span><i class="legend-dot selected-dot"></i> Dipilih</span>
+                <span><i class="legend-dot holiday-dot"></i> Libur nasional</span>
+                <span><i class="legend-dot leave-dot"></i> Cuti bersama</span>
+                <span><i class="legend-dot sunday-dot"></i> Minggu</span>
+              </div>
+            </div>
+            <div id="calendarGrid" class="calendar-grid" aria-label="Kalender pilihan tanggal lembur"></div>
+            <p id="calendarSelectedInfo" class="calendar-selected-info">Belum ada tanggal dipilih.</p>
+          </div>
+
+          <div id="singleDateBox" class="grid four hidden">
+            <label>
+              Tanggal Lembur
+              <input id="tanggalSingle" type="date" />
+            </label>
+            <label>
+              Jam Aktual Mulai
+              <input id="aktualMulai" type="time" value="16:00" />
+            </label>
+            <label>
+              Jam Aktual Selesai
+              <input id="aktualSelesai" type="time" value="20:00" />
+            </label>
+            <label>
+              Mulai Dihitung
+              <input id="hitungMulai" type="time" value="17:00" />
+            </label>
+            <label>
+              Selesai Dihitung
+              <input id="hitungSelesai" type="time" value="20:00" />
+            </label>
+            <label class="wide">
+              <span>Kegiatan <span class="muted">(otomatis, bisa diedit)</span></span>
+              <textarea id="kegiatanSingle" rows="2" placeholder="Kegiatan lembur"></textarea>
+            </label>
+          </div>
+
+          <div id="rangeDateBox" class="hidden">
+            <div class="grid four">
+              <label>
+                Dari Tanggal
+                <input id="tanggalMulai" type="date" />
+              </label>
+              <label>
+                Sampai Tanggal
+                <input id="tanggalSampai" type="date" />
+              </label>
+              <label>
+                Jam Aktual Mulai
+                <input id="rangeAktualMulai" type="time" value="16:00" />
+              </label>
+              <label>
+                Jam Aktual Selesai
+                <input id="rangeAktualSelesai" type="time" value="20:00" />
+              </label>
+              <label>
+                Mulai Dihitung
+                <input id="rangeHitungMulai" type="time" value="17:00" />
+              </label>
+              <label>
+                Selesai Dihitung
+                <input id="rangeHitungSelesai" type="time" value="20:00" />
+              </label>
+            </div>
+            <div class="weekday-box">
+              <strong>Hari yang dimasukkan:</strong>
+              <label><input type="checkbox" class="weekdayPick" value="1" checked /> Senin</label>
+              <label><input type="checkbox" class="weekdayPick" value="2" checked /> Selasa</label>
+              <label><input type="checkbox" class="weekdayPick" value="3" checked /> Rabu</label>
+              <label><input type="checkbox" class="weekdayPick" value="4" checked /> Kamis</label>
+              <label><input type="checkbox" class="weekdayPick" value="5" checked /> Jumat</label>
+              <label><input type="checkbox" class="weekdayPick" value="6" checked /> Sabtu</label>
+              <label><input type="checkbox" class="weekdayPick" value="0" /> Minggu</label>
+            </div>
+          </div>
+
+          <p class="hint">Tanggal yang sudah ada di daftar hanya diperbarui jamnya — kegiatan yang sudah kamu edit tidak ditimpa.</p>
+          <div class="toolbar">
+            <button id="btnAddRows" class="btn primary">Tambahkan ke Daftar</button>
+            <button id="btnResetRows" class="btn ghost danger">Kosongkan Daftar</button>
+          </div>
+        </section>
+
+        <section id="cardStep4" class="card no-print collapsible collapsed">
+          <div class="section-title">
+            <span class="step">4</span>
+            <div>
+              <h2>Daftar Lembur</h2>
+              <p>Semua baris masih bisa diedit sebelum disimpan atau dicetak.</p>
+            </div>
+            <button class="collapse-btn" type="button" aria-expanded="false" aria-controls="cardStep4">Buka</button>
+          </div>
+
+          <div class="table-wrap">
+            <table class="data-table" id="overtimeTable">
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Tanggal</th>
+                  <th>Kegiatan</th>
+                  <th>Aktual</th>
+                  <th>Dihitung</th>
+                  <th>Total</th>
+                  <th><span class="visually-hidden">Aksi</span></th>
+                </tr>
+              </thead>
+              <tbody id="overtimeBody"></tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="5">Total</td>
+                  <td id="totalJamCell">0 jam</td>
+                  <td></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <div class="grid two approval-grid">
+            <label>
+              Nama Atasan / Pejabat Mengetahui
+              <input id="atasanNama" placeholder="Nama pejabat" />
+            </label>
+            <label>
+              Jabatan Atasan
+              <input id="atasanJabatan" placeholder="Jabatan pejabat" />
+            </label>
+            <label>
+              Catatan
+              <textarea id="catatan" rows="2" placeholder="Catatan tambahan, jika ada"></textarea>
+            </label>
+            <label>
+              Lokasi dan Tanggal Tanda Tangan
+              <input id="lokasiTanggal" placeholder="Yogyakarta, 30 Juni 2026" />
+            </label>
+          </div>
+        </section>
+
+        <section class="preview-card" id="previewCard">
+          <div class="print-toolbar no-print">
+            <button id="btnEdit" class="btn soft">Edit Kembali</button>
+            <button id="btnPrintPreview" class="btn primary">Cetak / Simpan PDF</button>
+          </div>
+          <div id="printArea" class="print-area"></div>
+        </section>
+      </main>
+    </div>
   </div>
 
   <script src="app.js"></script>
