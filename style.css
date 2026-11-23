@@ -407,7 +407,8 @@ input::placeholder,textarea::placeholder{color:var(--text-3)}
 .print-table{width:100%;border-collapse:collapse;margin-top:14px;font-size:12px}
 .print-table th,.print-table td{border:1px solid #111;padding:6px 7px;vertical-align:top}
 .print-table th{text-align:center;background:#f2f2f2}
-.print-table td:nth-child(n+5){white-space:nowrap}
+.print-table td:nth-child(n+4),.print-table .col-tanggal{white-space:nowrap}
+.print-table td:nth-child(3){width:100%}
 .print-summary{margin:12px 0;font-weight:700;text-align:right;font-size:13px}
 .note-box{border:1px solid #bbb;border-radius:4px;padding:10px 12px;margin-top:14px;font-size:12px}
 .signature-section{display:grid;grid-template-columns:1fr 1fr;gap:0 42px;margin-top:30px;text-align:center;font-size:13px;align-items:start}

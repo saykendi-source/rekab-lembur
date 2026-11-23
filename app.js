@@ -722,8 +722,7 @@ function buildPreview() {
   const rowsHTML = data.rows.map((row, i) => `
     <tr>
       <td style="text-align:center">${i + 1}</td>
-      <td>${formatDateID(row.tanggal)}</td>
-      <td>${row.hari}</td>
+      <td class="col-tanggal">${row.hari}, ${formatDateID(row.tanggal)}</td>
       <td>${escapeHTML(row.kegiatan)}</td>${jam ? `
       <td style="text-align:center">${row.aktualMulai} - ${row.aktualSelesai}</td>
       <td style="text-align:center">${row.hitungMulai} - ${row.hitungSelesai}</td>
@@ -745,8 +744,7 @@ function buildPreview() {
       <thead>
         <tr>
           <th>No</th>
-          <th>Tanggal</th>
-          <th>Hari</th>
+          <th>Hari, Tanggal</th>
           <th>Kegiatan</th>${jam ? `
           <th>Jam Aktual</th>
           <th>Jam Dihitung</th>
