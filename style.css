@@ -204,6 +204,15 @@ svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-l
 .t-blue{background:var(--b-bg);color:var(--b-tx)} .t-blue .tile-ic{background:var(--b-ic)}
 .tile strong,.tile p{color:var(--text)}
 
+/* Pilihan hitungan lembur */
+.hero-toggle{margin:16px 0 0;background:rgba(255,255,255,.5)}
+.hero-toggle label{padding:6px 14px;font-size:12.5px}
+.hari-only{display:none}
+body.tanpa-jam .jam-only{display:none!important}
+body.tanpa-jam .hari-only{display:block}
+body.tanpa-jam .data-table{min-width:520px}
+body.tanpa-jam .data-table textarea{min-height:44px}
+
 /* ---------- Kartu langkah ---------- */
 .steps{min-width:0}
 .card{

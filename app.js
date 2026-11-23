@@ -87,8 +87,22 @@ let state = {
   // ID pengajuan disimpan per bulan: { "2026-11": "LBR-202611-12345" }.
   // Dengan begitu menyimpan bulan baru selalu membuat ID baru,
   // dan menyimpan ulang bulan yang sama memperbarui pengajuan bulan itu saja.
-  submissionIds: {}
+  submissionIds: {},
+  // "jam"  = catat jam aktual, jam dihitung, dan total jam
+  // "hari" = cukup tanggal, hari, dan kegiatan (tanpa jam)
+  modeHitung: "jam"
 };
+
+function pakaiJam() {
+  return state.modeHitung !== "hari";
+}
+
+function applyModeHitung() {
+  document.body.classList.toggle("tanpa-jam", !pakaiJam());
+  document.querySelectorAll("input[name='modeHitung']").forEach((el) => {
+    el.checked = el.value === (pakaiJam() ? "jam" : "hari");
+  });
+}
 
 function loadLocal() {
   try {
@@ -358,10 +372,30 @@ function renderSummary() {
   const nik = $("nik").value.trim();
   const unit = $("unitKerja").value.trim();
 
-  $("sumJam").textContent = rounded.toLocaleString("id-ID");
-  $("sumHari").textContent = state.rows.length;
-  $("sumAktual").textContent = round2(aktual).toLocaleString("id-ID");
-  $("sumRata").textContent = state.rows.length ? round2(total / state.rows.length).toLocaleString("id-ID") : "0";
+  const setTile = (n, label, value, note) => {
+    const tile = document.querySelector(`[data-tile="${n}"]`);
+    if (!tile) return;
+    tile.querySelector("p").textContent = label;
+    tile.querySelector("strong").textContent = value;
+    tile.querySelector("small").textContent = note;
+  };
+  if (pakaiJam()) {
+    $("sumJam").textContent = rounded.toLocaleString("id-ID");
+    $("discLabel").textContent = "jam dihitung";
+    setTile(1, "Hari lembur", state.rows.length, "tanggal di daftar");
+    setTile(2, "Jam aktual", round2(aktual).toLocaleString("id-ID"), "total di kantor");
+    setTile(3, "Rata-rata", state.rows.length ? round2(total / state.rows.length).toLocaleString("id-ID") : "0", "jam dihitung / hari");
+  } else {
+    const isLibur = (r) => getDayName(r.tanggal) === "Minggu" || getHolidayInfo(r.tanggal);
+    const kerja = state.rows.filter((r) => !isLibur(r) && getDayName(r.tanggal) !== "Sabtu").length;
+    const sabtu = state.rows.filter((r) => !isLibur(r) && getDayName(r.tanggal) === "Sabtu").length;
+    const terisi = state.rows.filter((r) => String(r.kegiatan || "").trim()).length;
+    $("sumJam").textContent = state.rows.length;
+    $("discLabel").textContent = "hari lembur";
+    setTile(1, "Hari kerja", kerja, "Senin – Jumat");
+    setTile(2, "Kegiatan terisi", terisi, `dari ${state.rows.length} tanggal`);
+    setTile(3, "Hari Sabtu", sabtu, "di luar tanggal merah");
+  }
   $("sumLibur").textContent = libur;
   $("sumNama").textContent = nama ? [nama, unit].filter(Boolean).join(" · ") : "Nama belum diisi";
   $("sumBulan").textContent = formatMonthID($("bulanPengajuan").value).replace("-", " ") || "Bulan belum dipilih";
@@ -369,7 +403,9 @@ function renderSummary() {
   const firstName = nama.split(/\s+/)[0] || "";
   $("greeting").textContent = firstName ? `${greetingWord()}, ${firstName}` : greetingWord();
   const today = new Date().toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
-  $("greetSub").textContent = `${today} · ${state.rows.length} tanggal lembur · ${hoursText(total)} dihitung`;
+  $("greetSub").textContent = pakaiJam()
+    ? `${today} · ${state.rows.length} tanggal lembur · ${hoursText(total)} dihitung`
+    : `${today} · ${state.rows.length} hari lembur · tanpa hitungan jam`;
   $("sideAvatar").textContent = initials(nama);
   $("topAvatar").textContent = initials(nama);
   $("sideNama").textContent = nama || "Nama belum diisi";
@@ -579,9 +615,9 @@ function renderRows() {
       <td>${index + 1}</td>
       <td><input class="mini-input" type="date" value="${row.tanggal}" data-field="tanggal"><span class="row-day">${row.hari}</span></td>
       <td><textarea rows="2" data-field="kegiatan">${escapeHTML(row.kegiatan || "")}</textarea></td>
-      <td><div class="time-group"><input class="mini-input" type="time" value="${row.aktualMulai}" data-field="aktualMulai"><input class="mini-input" type="time" value="${row.aktualSelesai}" data-field="aktualSelesai"></div></td>
-      <td><div class="time-group"><input class="mini-input" type="time" value="${row.hitungMulai}" data-field="hitungMulai"><input class="mini-input" type="time" value="${row.hitungSelesai}" data-field="hitungSelesai"></div></td>
-      <td><strong>${hoursText(row.totalJam)}</strong></td>
+      <td class="jam-only"><div class="time-group"><input class="mini-input" type="time" value="${row.aktualMulai}" data-field="aktualMulai"><input class="mini-input" type="time" value="${row.aktualSelesai}" data-field="aktualSelesai"></div></td>
+      <td class="jam-only"><div class="time-group"><input class="mini-input" type="time" value="${row.hitungMulai}" data-field="hitungMulai"><input class="mini-input" type="time" value="${row.hitungSelesai}" data-field="hitungSelesai"></div></td>
+      <td class="jam-only"><strong>${hoursText(row.totalJam)}</strong></td>
       <td><button class="action-link" type="button" title="Hapus baris" aria-label="Hapus baris ${index + 1}">✕</button></td>
     `;
     tr.querySelectorAll("input, textarea").forEach((el) => {
@@ -590,7 +626,9 @@ function renderRows() {
     tr.querySelector("button").addEventListener("click", () => deleteRow(row.id));
     body.appendChild(tr);
   });
-  $("totalJamCell").textContent = hoursText(total);
+  $("totalRow").innerHTML = pakaiJam()
+    ? `<td colspan="5">Total</td><td>${hoursText(total)}</td><td></td>`
+    : `<td colspan="3">Total: ${state.rows.length} hari</td><td></td>`;
   renderSummary();
 }
 
@@ -610,6 +648,12 @@ function validateSubmission() {
   }
   if (!state.rows.length) return "Daftar lembur masih kosong.";
   for (const row of state.rows) {
+    if (!pakaiJam()) {
+      if (!row.tanggal || !String(row.kegiatan || "").trim()) {
+        return `Tanggal dan kegiatan wajib diisi${row.tanggal ? ` (${formatDateID(row.tanggal)})` : ""}.`;
+      }
+      continue;
+    }
     if (!row.tanggal || !row.kegiatan || !row.hitungMulai || !row.hitungSelesai) {
       return "Tanggal, kegiatan, dan jam dihitung wajib lengkap di setiap baris.";
     }
@@ -649,12 +693,15 @@ function collectSubmission(status = "Draft", { createId = false } = {}) {
     jabatan: $("jabatan").value.trim(),
     bulanPengajuan: bulan,
     totalHari: state.rows.length,
-    totalJam: Math.round(totalJam * 100) / 100,
+    modeHitung: pakaiJam() ? "jam" : "hari",
+    totalJam: pakaiJam() ? Math.round(totalJam * 100) / 100 : "",
     atasanNama: $("atasanNama").value.trim(),
     atasanJabatan: $("atasanJabatan").value.trim(),
     lokasiTanggal: $("lokasiTanggal").value.trim(),
     catatan: $("catatan").value.trim(),
-    rows: state.rows.map((r) => calculateRow({ ...r }))
+    rows: state.rows.map((r) => pakaiJam()
+      ? calculateRow({ ...r })
+      : { ...r, aktualMulai: "", aktualSelesai: "", hitungMulai: "", hitungSelesai: "", totalJam: "" })
   };
 }
 
@@ -671,15 +718,16 @@ function buildPreview() {
     return false;
   }
   const data = collectSubmission("Preview");
+  const jam = data.modeHitung === "jam";
   const rowsHTML = data.rows.map((row, i) => `
     <tr>
       <td style="text-align:center">${i + 1}</td>
       <td>${formatDateID(row.tanggal)}</td>
       <td>${row.hari}</td>
-      <td>${escapeHTML(row.kegiatan)}</td>
+      <td>${escapeHTML(row.kegiatan)}</td>${jam ? `
       <td style="text-align:center">${row.aktualMulai} - ${row.aktualSelesai}</td>
       <td style="text-align:center">${row.hitungMulai} - ${row.hitungSelesai}</td>
-      <td style="text-align:center">${hoursText(row.totalJam)}</td>
+      <td style="text-align:center">${hoursText(row.totalJam)}</td>` : ""}
     </tr>`).join("");
 
   $("printArea").innerHTML = `
@@ -699,16 +747,16 @@ function buildPreview() {
           <th>No</th>
           <th>Tanggal</th>
           <th>Hari</th>
-          <th>Kegiatan</th>
+          <th>Kegiatan</th>${jam ? `
           <th>Jam Aktual</th>
           <th>Jam Dihitung</th>
-          <th>Total</th>
+          <th>Total</th>` : ""}
         </tr>
       </thead>
       <tbody>${rowsHTML}</tbody>
     </table>
 
-    <p class="print-summary">Total: ${data.totalHari} hari / ${hoursText(data.totalJam)}</p>
+    <p class="print-summary">Total: ${data.totalHari} hari${jam ? ` / ${hoursText(data.totalJam)}` : ""}</p>
     ${data.catatan ? `<div class="note-box"><strong>Catatan:</strong><br>${escapeHTML(data.catatan)}</div>` : ""}
 
     <div class="signature-section">
@@ -996,6 +1044,18 @@ function bindEvents() {
     $(id).addEventListener("input", () => { saveProfile(); renderSummary(); });
   });
   $("bulanPengajuan").addEventListener("change", renderSummary);
+  document.querySelectorAll("input[name='modeHitung']").forEach((el) => {
+    el.addEventListener("change", () => {
+      state.modeHitung = el.value === "hari" ? "hari" : "jam";
+      saveLocal();
+      applyModeHitung();
+      renderRows();
+      if ($("previewCard").classList.contains("active")) buildPreview();
+      setStatus(pakaiJam()
+        ? "Mode dengan jam: jam aktual, jam dihitung, dan total jam ikut dicatat."
+        : "Mode hari & kegiatan saja: jam tidak dicatat. Data jam yang sudah diisi tetap tersimpan bila nanti kembali ke mode dengan jam.");
+    });
+  });
 }
 
 function initDemoDataIfEmpty() {
@@ -1019,8 +1079,10 @@ function initDemoDataIfEmpty() {
 function init() {
   loadLocal();
   if (!Array.isArray(state.calendarSelected)) state.calendarSelected = [];
+  if (state.modeHitung !== "hari") state.modeHitung = "jam";
   initDemoDataIfEmpty();
   bindEvents();
+  applyModeHitung();
   if (restoreProfile()) {
     setCardCollapsed("cardStep1", true);
     openCard("cardStep3");

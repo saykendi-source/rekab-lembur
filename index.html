@@ -20,7 +20,8 @@
         <li><strong>Pilih pegawai</strong> atau isi Nama, NIK, Unit Kerja, dan Jabatan secara manual.</li>
         <li><strong>Isi Template Kegiatan</strong> Senin–Sabtu, lalu simpan agar kegiatan otomatis muncul saat tanggal dipilih.</li>
         <li><strong>Pilih tanggal lembur</strong> dari kalender bulanan, satu tanggal, atau periode tanggal.</li>
-        <li><strong>Atur jam lembur</strong>, lalu klik Tambahkan ke Daftar.</li>
+        <li><strong>Pilih hitungan lembur</strong> di kartu ringkasan: <em>Dengan jam</em> (jam aktual, jam dihitung, total jam) atau <em>Hari &amp; kegiatan saja</em>.</li>
+        <li><strong>Atur jam lembur</strong> (khusus mode dengan jam), lalu klik Tambahkan ke Daftar.</li>
         <li><strong>Cek Daftar Lembur</strong>, edit kegiatan/jam bila diperlukan, lalu isi data atasan.</li>
         <li><strong>Tampilkan Preview</strong> untuk melihat bentuk laporan sebelum dicetak.</li>
         <li><strong>Simpan Pengajuan</strong> ke Spreadsheet, lalu Cetak / Simpan PDF.</li>
@@ -109,6 +110,10 @@
             <span class="tag"><i></i>Pengajuan bulan ini</span>
             <h2 id="sumBulan">Bulan</h2>
             <p id="sumNama" class="hero-sub">Nama belum diisi</p>
+            <div class="mode-toggle hero-toggle" role="radiogroup" aria-label="Hitungan lembur">
+              <label title="Catat jam aktual, jam dihitung, dan total jam"><input type="radio" name="modeHitung" value="jam" checked /> Dengan jam</label>
+              <label title="Cukup tanggal, hari, dan kegiatan"><input type="radio" name="modeHitung" value="hari" /> Hari &amp; kegiatan saja</label>
+            </div>
             <div class="hero-actions">
               <button id="btnSaveSubmission" class="btn primary" type="button">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
@@ -126,31 +131,31 @@
             <div class="disc-grooves"></div>
             <div class="disc-label">
               <strong id="sumJam">0</strong>
-              <small>jam dihitung</small>
+              <small id="discLabel">jam dihitung</small>
             </div>
           </div>
         </div>
 
         <div class="tiles">
-          <div class="tile t-green">
+          <div class="tile t-green" data-tile="1">
             <span class="tile-ic"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg></span>
             <p>Hari lembur</p>
             <strong id="sumHari">0</strong>
             <small>tanggal di daftar</small>
           </div>
-          <div class="tile t-peach">
+          <div class="tile t-peach" data-tile="2">
             <span class="tile-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span>
             <p>Jam aktual</p>
             <strong id="sumAktual">0</strong>
             <small>total di kantor</small>
           </div>
-          <div class="tile t-yellow">
+          <div class="tile t-yellow" data-tile="3">
             <span class="tile-ic"><svg viewBox="0 0 24 24"><path d="M4 18l5-6 4 3 7-9"/></svg></span>
             <p>Rata-rata</p>
             <strong id="sumRata">0</strong>
             <small>jam dihitung / hari</small>
           </div>
-          <div class="tile t-blue">
+          <div class="tile t-blue" data-tile="4">
             <span class="tile-ic"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></span>
             <p>Hari libur</p>
             <strong id="sumLibur">0</strong>
@@ -243,19 +248,19 @@
                 Tahun Kalender
                 <select id="calendarYearSelect"></select>
               </label>
-              <label>
+              <label class="jam-only">
                 Jam Aktual Mulai
                 <input id="calendarAktualMulai" type="time" value="16:00" />
               </label>
-              <label>
+              <label class="jam-only">
                 Jam Aktual Selesai
                 <input id="calendarAktualSelesai" type="time" value="20:00" />
               </label>
-              <label>
+              <label class="jam-only">
                 Mulai Dihitung
                 <input id="calendarHitungMulai" type="time" value="17:00" />
               </label>
-              <label>
+              <label class="jam-only">
                 Selesai Dihitung
                 <input id="calendarHitungSelesai" type="time" value="20:00" />
               </label>
@@ -280,19 +285,19 @@
               Tanggal Lembur
               <input id="tanggalSingle" type="date" />
             </label>
-            <label>
+            <label class="jam-only">
               Jam Aktual Mulai
               <input id="aktualMulai" type="time" value="16:00" />
             </label>
-            <label>
+            <label class="jam-only">
               Jam Aktual Selesai
               <input id="aktualSelesai" type="time" value="20:00" />
             </label>
-            <label>
+            <label class="jam-only">
               Mulai Dihitung
               <input id="hitungMulai" type="time" value="17:00" />
             </label>
-            <label>
+            <label class="jam-only">
               Selesai Dihitung
               <input id="hitungSelesai" type="time" value="20:00" />
             </label>
@@ -312,19 +317,19 @@
                 Sampai Tanggal
                 <input id="tanggalSampai" type="date" />
               </label>
-              <label>
+              <label class="jam-only">
                 Jam Aktual Mulai
                 <input id="rangeAktualMulai" type="time" value="16:00" />
               </label>
-              <label>
+              <label class="jam-only">
                 Jam Aktual Selesai
                 <input id="rangeAktualSelesai" type="time" value="20:00" />
               </label>
-              <label>
+              <label class="jam-only">
                 Mulai Dihitung
                 <input id="rangeHitungMulai" type="time" value="17:00" />
               </label>
-              <label>
+              <label class="jam-only">
                 Selesai Dihitung
                 <input id="rangeHitungSelesai" type="time" value="20:00" />
               </label>
@@ -341,7 +346,8 @@
             </div>
           </div>
 
-          <p class="hint">Tanggal yang sudah ada di daftar hanya diperbarui jamnya — kegiatan yang sudah kamu edit tidak ditimpa.</p>
+          <p class="hint hari-only">Mode <strong>Hari &amp; kegiatan saja</strong> aktif — jam lembur tidak dicatat. Ubah di kartu ringkasan atas bila perlu.</p>
+          <p class="hint">Tanggal yang sudah ada di daftar tidak dobel — kegiatan yang sudah kamu edit tidak ditimpa.</p>
           <div class="toolbar">
             <button id="btnAddRows" class="btn primary">Tambahkan ke Daftar</button>
             <button id="btnResetRows" class="btn ghost danger">Kosongkan Daftar</button>
@@ -365,15 +371,15 @@
                   <th>No</th>
                   <th>Tanggal</th>
                   <th>Kegiatan</th>
-                  <th>Aktual</th>
-                  <th>Dihitung</th>
-                  <th>Total</th>
+                  <th class="jam-only">Aktual</th>
+                  <th class="jam-only">Dihitung</th>
+                  <th class="jam-only">Total</th>
                   <th><span class="visually-hidden">Aksi</span></th>
                 </tr>
               </thead>
               <tbody id="overtimeBody"></tbody>
               <tfoot>
-                <tr>
+                <tr id="totalRow">
                   <td colspan="5">Total</td>
                   <td id="totalJamCell">0 jam</td>
                   <td></td>
