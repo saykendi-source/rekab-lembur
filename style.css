@@ -128,10 +128,10 @@ svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-l
 .greeting p{margin:4px 0 0;color:var(--text-2);font-size:13px}
 
 /* ---------- Overview: hero + tiles ---------- */
-.overview{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:16px;margin:20px 0 22px}
+.overview{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:16px;margin:20px 0 22px}
 .hero{
   position:relative;overflow:hidden;
-  display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;
+  display:flex;flex-direction:column;justify-content:center;
   padding:26px 26px 22px 28px;
   border-radius:26px;
   background:
@@ -166,29 +166,18 @@ svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-l
 .status-message[data-type="error"]::before{content:"⚠︎"}
 .status-message[data-type="success"]::before{content:"✓"}
 
-/* Piringan: total jam dihitung */
-.disc{
-  position:relative;width:200px;height:200px;border-radius:50%;flex:none;
-  background:
-    radial-gradient(circle at 50% 50%, transparent 0 30%, rgba(255,255,255,.05) 30.5% 31%, transparent 31.5%),
-    repeating-radial-gradient(circle at 50% 50%, #2c2824 0 2px, #35302b 2px 4px);
-  box-shadow:0 18px 40px rgba(60,35,20,.28), inset 0 0 0 6px #241f1b;
-  display:grid;place-items:center;
-}
-.disc-grooves{
-  position:absolute;inset:0;border-radius:50%;
-  background:conic-gradient(from 210deg, transparent 0 20%, rgba(255,255,255,.13) 26%, transparent 34% 70%, rgba(255,255,255,.08) 76%, transparent 84%);
-}
-.disc-label{
-  position:relative;width:96px;height:96px;border-radius:50%;
-  display:grid;place-content:center;text-align:center;
-  background:radial-gradient(circle at 35% 30%, #f6c9ae, var(--terracotta));
-  color:#3b1f14;box-shadow:inset 0 0 0 3px rgba(255,255,255,.25);
-}
-.disc-label strong{font-size:28px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
-.disc-label small{font-size:10px;font-weight:600;margin-top:3px;opacity:.8}
 
-.tiles{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.tiles{display:grid;grid-template-columns:1.1fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:14px}
+.tile-main{
+  grid-row:span 2;justify-content:flex-end;
+  background:radial-gradient(120% 90% at 20% 0%, #f1a487, var(--terracotta) 70%);
+  color:#fff;padding:20px;
+}
+.tile-main .tile-ic{background:rgba(255,255,255,.25);margin-bottom:auto}
+.tile.tile-main p,.tile.tile-main strong{color:#fff}
+.tile.tile-main strong{font-size:64px;line-height:1;margin:10px 0 6px}
+.tile.tile-main small{opacity:.9;font-size:13px;font-weight:600}
+.tile.tile-main p{font-size:13.5px}
 .tile{
   border-radius:22px;padding:16px 18px;
   display:flex;flex-direction:column;
@@ -461,7 +450,6 @@ input::placeholder,textarea::placeholder{color:var(--text-3)}
 /* ---------- Responsif ---------- */
 @media (max-width:1280px){
   .overview{grid-template-columns:1fr}
-  .tiles{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
 @media (max-width:1020px){
   body{padding:0}
@@ -474,18 +462,17 @@ input::placeholder,textarea::placeholder{color:var(--text-3)}
   .side-nav button::after{display:none}
   .main{padding:16px 16px 40px}
   .greeting h1{font-size:26px}
-  .tiles{grid-template-columns:1fr 1fr}
+  .tiles{grid-template-columns:1fr 1fr;grid-template-rows:none}
+  .tile-main{grid-row:auto;grid-column:1 / -1}
+  .tile-main .tile-ic{margin-bottom:10px}
+  .tile.tile-main strong{font-size:44px;margin:6px 0 4px}
 }
 @media (max-width:760px){
   .topbar .crumb{display:none}
   .top-actions{width:100%;justify-content:flex-end}
-  .hero{grid-template-columns:1fr;padding:22px 20px}
+  .hero{padding:22px 20px}
   .hero h2{font-size:28px}
-  .disc{position:absolute;right:-34px;top:-34px;width:160px;height:160px}
-  .disc-label{width:80px;height:80px}
-  .disc-label strong{font-size:22px}
   .hero-body{position:relative;z-index:1}
-  .hero .tag,.hero h2,.hero-sub{max-width:calc(100% - 110px)}
   .grid.two,.grid.three,.grid.four,.template-grid{grid-template-columns:1fr 1fr}
   .grid.three>label:first-child,.wide,.approval-grid>label{grid-column:1 / -1}
   input,textarea,select{font-size:16px}
